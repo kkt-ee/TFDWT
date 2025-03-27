@@ -12,15 +12,12 @@ description = "Fast Discrete Wavelet Transform TensorFlow Layers"
 readme = "README.md"
 requires-python = ">=3.9"
 classifiers = [
-  "License :: OSI Approved :: GNU General Public License v3 (GPL-3.0)",
   "Programming Language :: Python :: 3",
   "Operating System :: OS Independent",
   "Topic :: Scientific/Engineering",
-  "Topic :: Scientific/Engineering :: Multiresolution Signal Processing",
-  "Topic :: Scientific/Engineering :: Multirate Systems",
   "Intended Audience :: Science/Research"
 ]
-license = "GPL-3.0-or-later" # SPDX license expression for GPL-3.0 or later
+license = "GPL-3.0-or-later" 
 
 
 
