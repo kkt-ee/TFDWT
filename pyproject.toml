@@ -17,9 +17,7 @@ classifiers = [
   "Topic :: Scientific/Engineering",
   "Intended Audience :: Science/Research"
 ]
-license = "GPL-3.0-or-later" 
-
-
+license = {file = "LICENSE"}
 
 [project.urls]
 Homepage = "https://github.com/kkt-ee/TFDWT"
