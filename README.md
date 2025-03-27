@@ -110,5 +110,5 @@ END
 
 ---
 
-***TFDWT (c) 2025 Kishore Kumar Tarafdar, Research Fellow, EE, IITB, India/ भारत***
+***TFDWT (C) 2025 Kishore Kumar Tarafdar, Research Fellow, EE, IITB, India/ भारत***
 
