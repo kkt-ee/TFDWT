@@ -1,5 +1,5 @@
 
-from TFDWT3D.dbFBimpulseResponse import FBimpulseResponses
+from TFDWT.dbFBimpulseResponse import FBimpulseResponses
 
 # import pywt
 class GETDWTFiltersOrtho:

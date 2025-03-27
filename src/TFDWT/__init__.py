@@ -31,5 +31,5 @@ from TFDWT.GETDWTFiltersOrtho import GETDWTFiltersOrtho
 from TFDWT.get_A_matrix_dwt_analysisFB_unit import get_A_matrix_dwt_analysisFB_unit
 
 
-# from TFDWT3D.DWTIDWT1Dtfv1 import DWT1D, IDWT1D
-# from TFDWT3D.DWTIDWT2Dtfv1 import DWT2D, IDWT2D
+# from TFDWT3D.DWTIDWT1Dv1 import DWT1D, IDWT1D
+# from TFDWT3D.DWTIDWT2Dv1 import DWT2D, IDWT2D
