@@ -17,26 +17,28 @@ https://github.com/kkt-ee/TFDWT
 
 **Tree**
 
-        .
-        |-- LICENSE
-        |-- README.md
-        |-- dbFBimpulseResponses.json
-        |-- pyproject.toml
-        |-- requirements.txt
-        |-- resetpypi
-        |-- src
-        |   `-- TFDWT3D
-        |       |-- DWTIDWT1Dtfv1.py
-        |       |-- DWTIDWT2Dtfv1.py
-        |       |-- DWTIDWT3Dtfv1.py
-        |       |-- GETDWTFiltersOrtho.py
-        |       |-- __init__.py
-        |       |-- dbFBimpulseResp.json
-        |       |-- dbFBimpulseResponse.py
-        |       |-- get_A_matrix_dwt_analysisFB_unit.py
-        |       `-- setup.py
-        |-- tests
-        `-- updaterepo
+        ├── dist
+        │   ├── tfdwt-0.2-py3-none-any.whl
+        │   └── tfdwt-0.2.tar.gz
+        ├── LICENSE
+        ├── pyproject.toml
+        ├── README.md
+        ├── requirements.txt
+        ├── resetpypi
+        ├── src
+        │   └── TFDWT
+        │       ├── dbFBimpulseResponse.py
+        │       ├── DWTIDWT1Dv1.py
+        │       ├── DWTIDWT2Dv1.py
+        │       ├── get_A_matrix_dwt_analysisFB_unit.py
+        │       ├── GETDWTFiltersOrtho.py
+        │       └── __init__.py
+        ├── tests
+        ├── Tutorials
+        │   ├── brain.png
+        │   └── DWT_Tutorial.ipynb
+        └── updaterepo
+
 
 
 
