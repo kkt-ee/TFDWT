@@ -2,107 +2,60 @@
 
 https://github.com/kkt-ee/TFDWT 
 
-<!-- ***Batched 1D, 2D and 3D fast discrete wavelet transform (DWT) and inverse DWT*** -->
+Batched 1D and 2D Fast Discrete Wavelet Transform (DWT) and Inverse DWT (IDWT)
 
 ---
 
 
-# Developer 
+## Dependencies 
 
         Python 3.9.18
         TensorFlow 2.16.0
         Keras 2.14.0
         Numpy 1.26.0
         CUDA 12.3
-
-**Tree**
-
-        ├── dist
-        │   ├── tfdwt-0.2-py3-none-any.whl
-        │   └── tfdwt-0.2.tar.gz
-        ├── LICENSE
-        ├── pyproject.toml
-        ├── README.md
-        ├── requirements.txt
-        ├── resetpypi
-        ├── src
-        │   └── TFDWT
-        │       ├── dbFBimpulseResponse.py
-        │       ├── DWTIDWT1Dv1.py
-        │       ├── DWTIDWT2Dv1.py
-        │       ├── get_A_matrix_dwt_analysisFB_unit.py
-        │       ├── GETDWTFiltersOrtho.py
-        │       └── __init__.py
-        ├── tests
-        ├── Tutorials
-        │   ├── brain.png
-        │   └── DWT_Tutorial.ipynb
-        └── updaterepo
-
-
-
-
-
-**To build a pypi package**
-
-> python3 -m pip install --upgrade build
-
-> python3 -m build
-
-
-**To upload a pypi package online** (Registration required)
-
-> python3 -m pip install --upgrade twine
-
-> python3 -m twine upload --repository TFDWT3D dist/*
-
-Enter username and password...
-
-
-
-### Github push troubleshoot ssh
-
-> ls -artl ~/.ssh  
-
-> eval "$(ssh-agent -s)" 
-
-> ssh-add ~/.ssh/id_ed25519githubnew
-
-
-
-# User manual
-    
-        Works with square, cube dyadic scale batched data eg. 512x512x512
-        Upgrade reqd. for rectangular and cubiod shaped data... 
     
 
 
+## Installation guide
+
+**Install from pypi** (Option 1)
+
+```pip install TFDWT```
+
+**Install from Github** (Option 2)
+
+        Download the package
+
+```git clone https://github.com/kkt-ee/TFDWT.git```
+
+        Get into the TFDWT directory
+
+```cd TFDWT```
+
+        Run the following command to install the package
+
+```pip install .```
 
 
-**Install locally**
-
-> pip install .
-
-Check installation e.g.
-
-> ls /opt/anaconda3/envs/tf2/lib/python3.9/site-packages/TFDWT3D 
-
-**Uninstall**
-
-> pip uninstall TFDWT3D
 
 
-
-
+## Check the installations
 
 **Import forward and inverse transforms**
 
+        1D DWT and IDWT
 
 ```from TFDWT3D.DWTIDWT1Dv1 import DWT1D, IDWT1D```
+
+        2D DWT and IDWT
 
 ```from TFDWT3D.DWTIDWT2Dv1 import DWT2D, IDWT2D```
 
 
+## Uninstall TFDWT
+
+```pip uninstall TFDWT3D```
 
 
 
