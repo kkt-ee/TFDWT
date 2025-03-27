@@ -17,7 +17,11 @@ classifiers = [
   "Topic :: Scientific/Engineering",
   "Intended Audience :: Science/Research"
 ]
-license = {file = "LICENSE"}
+license = "GPL-3.0-or-later"
+#license-files = [ "LICENSE" ]
+
+[tool.hatch.build]
+include = ["LICENSE", "README.md", "TFDWT/**"]
 
 [project.urls]
 Homepage = "https://github.com/kkt-ee/TFDWT"
