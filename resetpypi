@@ -1,0 +1,10 @@
+# Prepare the package directory for a fresh build
+
+pip uninstall TFDWT3D
+
+sudo rm -r build
+sudo rm -r dist 
+sudo rm -r src/TFDWT3D.egg-info
+
+python -m build
+pip install .
