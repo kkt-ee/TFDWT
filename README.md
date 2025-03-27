@@ -98,11 +98,10 @@ Check installation e.g.
 **Import forward and inverse transforms**
 
 
-> from TFDWT3D.DWTIDWT1Dtfv1 import DWT1D, IDWT1D
+```from TFDWT3D.DWTIDWT1Dv1 import DWT1D, IDWT1D```
 
-> from TFDWT3D.DWTIDWT2Dtfv1 import DWT2D, IDWT2D
+```from TFDWT3D.DWTIDWT2Dv1 import DWT2D, IDWT2D```
 
-> from TFDWT3D.DWTIDWT3Dtfv1 import DWT3D, IDWT3D
 
 
 
@@ -111,5 +110,5 @@ END
 
 ---
 
-***TFDWT3D (c) 2024 Kishore Kumar Tarafdar, Research Fellow, EE, IITB, India/ भारत***
+***TFDWT (c) 2025 Kishore Kumar Tarafdar, Research Fellow, EE, IITB, India/ भारत***
 
