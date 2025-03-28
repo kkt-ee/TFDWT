@@ -1,67 +1,128 @@
-***TFDWT: Fast Discrete Wavelet Transform TensorFlow Layers***
+# TFDWT: Fast Discrete Wavelet Transform TensorFlow Layers
 
-https://github.com/kkt-ee/TFDWT 
+Fast $1\text{D}$ and $2\text{D}$ Discrete Wavelet Transform ($\text{DWT}$) and Inverse Discrete Wavelet Transform ($\text{IDWT}$)
 
-Batched 1D and 2D Fast Discrete Wavelet Transform (DWT) and Inverse DWT (IDWT)
+**Available wavelet families ―**
 
----
+```txt
+        Haar (haar)
+        Daubechies (db)
+        Symlets (sym)
+        Coiflets (coif)
+        Biorthogonal (bior)
+        Reverse biorthogonal (rbio)
+```
 
 
-## Dependencies 
+  
+<br/><br/><br/>
 
-        Python 3.9.18
-        TensorFlow 2.16.0
-        Keras 2.14.0
-        Numpy 1.26.0
-        CUDA 12.3
-    
-
+* * *
 
 ## Installation guide
 
-**Install from pypi** (Option 1)
+**Install from PyPI** (Option $1$)
 
-```pip install TFDWT```
+```bash
+pip install TFDWT
+```
 
-**Install from Github** (Option 2)
+  
+<br/><br/>
 
-        Download the package
+**Install from Github** (Option $2$)
 
-```git clone https://github.com/kkt-ee/TFDWT.git```
+Download the package
 
-        Get into the TFDWT directory
+```bash
+git clone https://github.com/kkt-ee/TFDWT.git
+```
 
-```cd TFDWT```
+Change directory to the downloaded TFDWT 
 
-        Run the following command to install the package
+```bash
+cd TFDWT
+```
 
-```pip install .```
+Run the following command to install the TFDWT package
+
+```bash
+pip install .
+```
 
 
 
+  
+<br/><br/><br/>
 
-## Check the installations
+* * *
 
-**Import forward and inverse transforms**
+## Test and verify installations
 
-        1D DWT and IDWT
+### Compute $\text{DWT}$ $1\text{D}$ and $\text{IDWT}$ $1\text{D}$ of batched, multichannel $x$ of shape $(\text{batch, length, channels})$
 
-```from TFDWT3D.DWTIDWT1Dv1 import DWT1D, IDWT1D```
+```python
+"""Perfect Reconstruction 1D DWT level-1 Filter bank"""
+from TFDWT.DWTIDWT1Dv1 import DWT1D, IDWT1D
 
-        2D DWT and IDWT
+LH = DWT1D(wave='bior3.1')(x)       # Analysis
+x_hat = IDWT1D(wave='bior3.1')(LH)  # Synthesis
 
-```from TFDWT3D.DWTIDWT2Dv1 import DWT2D, IDWT2D```
+```
 
+  <br/><br/>
+
+### Compute $\text{DWT}$ $2\text{D}$ and $\text{IDWT}$ $2\text{D}$ of batched, multichannel $x$ of shape $(\text{batch, height, width, channels})$
+
+```python
+"""Perfect Reconstruction 2D DWT level-1 Filter bank"""
+from TFDWT.DWTIDWT2Dv1 import DWT2D, IDWT2D
+
+LLLHHLHH = DWT2D(wave=wave)(x)      # Analysis
+x_hat = IDWT2D(wave=wave)(LLLHHLHH) # Synthesis
+
+```
+
+ <br/><br/><br/>
+
+**NOTE ―** Using the above forward and inverse transforms the above $\text{DWT}$ and $\text{IDWT}$ layers can be used to construct multilevel $\text{DWT}$ filter banks and $\text{Wave Packet}$ filter banks.
+
+
+
+  
+<br/><br/><br/>
+
+
+
+* * *
+
+## Package is tested with dependency versions
+
+```txt
+        Python 3.12.7
+        TensorFlow 2.18.0
+        Keras 3.6.0
+        Numpy 2.0.2
+        CUDA 12.5.1
+```
+
+<br/><br/>
+
+***The installation of the TFDWT package is recommended inside a virtual environment with tensorflow[GPU] installed at first***
+
+<br/><br/><br/>
+
+* * *
 
 ## Uninstall TFDWT
 
-```pip uninstall TFDWT3D```
+```bash
+pip uninstall TFDWT
+```
 
+  
+<br/><br/><br/><br/><br/>
 
+* * *
 
-END
-
----
-
-***TFDWT (C) 2025 Kishore Kumar Tarafdar, Prime Minister's Research Fellow, EE, IIT Bombay, भारत***
-
+***TFDWT (C) 2025 Kishore Kumar Tarafdar, Prime Minister's Research Fellow, EE, IIT Bombay, भारत*** 🇮🇳

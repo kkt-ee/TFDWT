@@ -1,1 +1,4 @@
+# Change version number in .toml file
+# python -m build
+# twine check dist/*
 python -m twine upload --repository pypi --config-file .pypirc dist/*
