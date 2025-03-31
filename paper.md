@@ -103,7 +103,7 @@ $$
 
 $$
 \text{{Analysis matrix is }}\boldsymbol{A}	={\small {\left[\begin{array}{cccccccc}
-\tilde{g}_{1} & g_{0} & 0 & 0 & g_{5} & g_{4} & g_{3} & g_{2}\\
+\hat{g}_{1} & g_{0} & 0 & 0 & g_{5} & g_{4} & g_{3} & g_{2}\\
 g_{3} & g_{2} & g_{1} & g_{0} & 0 & 0 & g_{5} & g_{4}\\
 g_{5} & g_{4} & g_{3} & g_{2} & g_{1} & g_{0} & 0 & 0\\
 0 & 0 & g_{5} & g_{4} & g_{3} & g_{2} & g_{1} & g_{0}\\
@@ -118,7 +118,7 @@ Similarly,
 
 $$
 \text{{Synthesis matrix is }}\boldsymbol{S}	={\small {\left[\begin{array}{cccccccc}
-{\tilde{g}_{1}} & \tilde{g}_{0} & 0 & 0 & \tilde{g}_{5} & \tilde{g}_{4} & \tilde{g}_{3} & \tilde{g}_{2}\\
+\tilde{g}_{1} & \tilde{g}_{0} & 0 & 0 & \tilde{g}_{5} & \tilde{g}_{4} & \tilde{g}_{3} & \tilde{g}_{2}\\
 \tilde{g}_{3} & \tilde{g}_{2} & \tilde{g}_{1} & \tilde{g}_{0} & 0 & 0 & \tilde{g}_{5} & \tilde{g}_{4}\\
 \tilde{g}_{5} & \tilde{g}_{4} & \tilde{g}_{3} & \tilde{g}_{2} & \tilde{g}_{1} & \tilde{g}_{0} & 0 & 0\\
 0 & 0 & \tilde{g}_{5} & \tilde{g}_{4} & \tilde{g}_{3} & \tilde{g}_{2} & \tilde{g}_{1} & \tilde{g}_{0}\\
