@@ -1,0 +1,1195 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.2 20190208//EN"
+                  "JATS-publishing1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" dtd-version="1.2" article-type="other">
+<front>
+<journal-meta>
+<journal-id></journal-id>
+<journal-title-group>
+<journal-title>Journal of Open Source Software</journal-title>
+<abbrev-journal-title>JOSS</abbrev-journal-title>
+</journal-title-group>
+<issn publication-format="electronic">2475-9066</issn>
+<publisher>
+<publisher-name>Open Journals</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="publisher-id">0</article-id>
+<article-id pub-id-type="doi">N/A</article-id>
+<title-group>
+<article-title>TFDWT: Fast Discrete Wavelet Transform TensorFlow
+Layers</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">https://orcid.org/0009-0001-4548-7639</contrib-id>
+<name>
+<surname>Tarafdar</surname>
+<given-names>Kishore K.</given-names>
+</name>
+<xref ref-type="aff" rid="aff-"/>
+</contrib>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">https://orcid.org/0000-0001-8439-5625</contrib-id>
+<name>
+<surname>Gadre</surname>
+<given-names>Vikram M.</given-names>
+</name>
+<xref ref-type="aff" rid="aff-"/>
+</contrib>
+<aff id="aff-1">
+<institution-wrap>
+<institution>Department of Electrical Engineering, Indian Institute of
+Technology Bombay, India</institution>
+</institution-wrap>
+</aff>
+</contrib-group>
+<pub-date date-type="pub" publication-format="electronic" iso-8601-date="2025-04-01">
+<day>1</day>
+<month>4</month>
+<year>2025</year>
+</pub-date>
+<volume>¿VOL?</volume>
+<issue>¿ISSUE?</issue>
+<fpage>¿PAGE?</fpage>
+<permissions>
+<copyright-statement>Authors of papers retain copyright and release the
+work under a Creative Commons Attribution 4.0 International License (CC
+BY 4.0)</copyright-statement>
+<copyright-year>1970</copyright-year>
+<copyright-holder>The article authors</copyright-holder>
+<license license-type="open-access" xlink:href="https://creativecommons.org/licenses/by/4.0/">
+<license-p>Authors of papers retain copyright and release the work under
+a Creative Commons Attribution 4.0 International License (CC BY
+4.0)</license-p>
+</license>
+</permissions>
+<kwd-group kwd-group-type="author">
+<kwd>Python</kwd>
+<kwd>Tensorflow</kwd>
+<kwd>Discrete Wavelet Transform</kwd>
+<kwd>Multiresolution analysis</kwd>
+<kwd>Multirate systems</kwd>
+<kwd>Deep Learning</kwd>
+<kwd>CUDA</kwd>
+</kwd-group>
+</article-meta>
+</front>
+<body>
+<sec id="summary">
+  <title>1 Summary</title>
+  <p>TFDWT is an open-source Python package that allows the creation of
+  TensorFlow Layers for Fast Discrete Wavelet Transform (DWT) and
+  Inverse Discrete Wavelet Transform (IDWT) in end-to-end
+  backpropagation learning networks. These layers facilitate the
+  construction of multilevel DWT filterbanks and Wavelet Packet
+  Transform (WPT) filterbanks for a spatial-frequency representation of
+  the inputs and features in shallow or deep networks. A multiresolution
+  signal representation using a multi-rate discrete wavelet system
+  creates enriched joint natural-frequency representations. The discrete
+  wavelet system partitions the frequency plane into subbands using
+  orthogonal dilated and translated lowpass scaling and highpass wavelet
+  function. A realization of a fast discrete wavelet system is a
+  two-band perfect reconstruction multi-rate filter bank with FIR
+  filters corresponding to the impulse responses of the scaling and
+  wavelet function with downsampling and upsampling operations. A filter
+  bank for a higher dimensional input is a seamless extension by
+  successive separable circular convolutions across each independent
+  axis.</p>
+</sec>
+<sec id="statement-of-need">
+  <title>2 Statement of need</title>
+  <p>In machine or deep learning, an efficient multiresolution
+  representation of data often helps to build economical and explainable
+  models. The Wavelet toolbox
+  (<xref alt="Misiti et al., 1996" rid="ref-misiti1996wavelet" ref-type="bibr">Misiti
+  et al., 1996</xref>) by MathWorks is a proprietary software that has
+  served the requirements for D-dimensional wavelet transforms in the
+  MATLAB environment for a few decades. Several open-source packages are
+  now available for 1D and 2D DWT in Python. Pywavelets
+  (<xref alt="Lee et al., 2019" rid="ref-lee2019pywavelets" ref-type="bibr">Lee
+  et al., 2019</xref>) is a D-dimensional wavelet transform library in
+  Python that works with Numpy
+  (<xref alt="Harris et al., 2020" rid="ref-harris2020array" ref-type="bibr">Harris
+  et al., 2020</xref>) arrays. However, it is challenging to directly
+  use Pywavelets with the symbolic tensors in TensorFlow
+  (<xref alt="Developers, 2022" rid="ref-developers2022tensorflow" ref-type="bibr">Developers,
+  2022</xref>) layers and CUDA
+  (<xref alt="Fatica, 2008" rid="ref-fatica2008cuda" ref-type="bibr">Fatica,
+  2008</xref>). WaveTF
+  (<xref alt="Versaci, 2021" rid="ref-versaci2021wavetf" ref-type="bibr">Versaci,
+  2021</xref>) is a solution for constructing 1D and 2D DWT layers in
+  TensorFlow but is limited to only Haar and Db2 wavelets. The package
+  tensorflow-wavelets
+  (<xref alt="Leiderman, 2025" rid="ref-tensorflow-wavelets-1.1.2" ref-type="bibr">Leiderman,
+  2025</xref>) supports multiple wavelets, but it has a minor bug in
+  perfect reconstruction due to the padding and boundary effects in
+  processing the finite-length inputs. In Pytorch
+  (<xref alt="Imambi et al., 2021" rid="ref-imambi2021pytorch" ref-type="bibr">Imambi
+  et al., 2021</xref>), the pytorch-wavelets
+  (<xref alt="Cotter, 2023" rid="ref-pytorch-wavelets-1.3.0" ref-type="bibr">Cotter,
+  2023</xref>) package allows the construction of 1D and 2D DWT
+  layers.</p>
+  <p>For a <inline-formula><alternatives>
+  <tex-math><![CDATA[\text{{D}}]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mtext mathvariant="normal">D</mml:mtext></mml:math></alternatives></inline-formula>-dimensional
+  wavelet <inline-formula><alternatives>
+  <tex-math><![CDATA[\boldsymbol{\psi} \in L^{2}(\mathbb{R})^{\text{{D}}}]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝛙</mml:mi><mml:mo>∈</mml:mo><mml:msup><mml:mi>L</mml:mi><mml:mn>2</mml:mn></mml:msup><mml:msup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>ℝ</mml:mi><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mtext mathvariant="normal">D</mml:mtext></mml:msup></mml:mrow></mml:math></alternatives></inline-formula>,
+  a discrete wavelet system defined by <inline-formula><alternatives>
+  <tex-math><![CDATA[\big\{\boldsymbol{\psi}_{m,\boldsymbol{p}}:m\in\mathbb{Z},\boldsymbol{p}\in\mathbb{Z}^{\text{{D}}}\big\}]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">{</mml:mo><mml:msub><mml:mi>𝛙</mml:mi><mml:mrow><mml:mi>m</mml:mi><mml:mo>,</mml:mo><mml:mi>𝐩</mml:mi></mml:mrow></mml:msub><mml:mo>:</mml:mo><mml:mi>m</mml:mi><mml:mo>∈</mml:mo><mml:mi>ℤ</mml:mi><mml:mo>,</mml:mo><mml:mi>𝐩</mml:mi><mml:mo>∈</mml:mo><mml:msup><mml:mi>ℤ</mml:mi><mml:mtext mathvariant="normal">D</mml:mtext></mml:msup><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">}</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
+  forms an orthonormal basis in <inline-formula><alternatives>
+  <tex-math><![CDATA[\boldsymbol{\psi}\in L^{2}(\mathbb{R})^{\text{{D}}}]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝛙</mml:mi><mml:mo>∈</mml:mo><mml:msup><mml:mi>L</mml:mi><mml:mn>2</mml:mn></mml:msup><mml:msup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>ℝ</mml:mi><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mtext mathvariant="normal">D</mml:mtext></mml:msup></mml:mrow></mml:math></alternatives></inline-formula>,
+  where <inline-formula><alternatives>
+  <tex-math><![CDATA[\boldsymbol{\psi}_{m,\boldsymbol{p}}(\boldsymbol{x}):=2^{m}\psi(2^{m}\boldsymbol{x}-\boldsymbol{p})]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>𝛙</mml:mi><mml:mrow><mml:mi>m</mml:mi><mml:mo>,</mml:mo><mml:mi>𝐩</mml:mi></mml:mrow></mml:msub><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐱</mml:mi><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mo>:=</mml:mo><mml:msup><mml:mn>2</mml:mn><mml:mi>m</mml:mi></mml:msup><mml:mi>ψ</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msup><mml:mn>2</mml:mn><mml:mi>m</mml:mi></mml:msup><mml:mi>𝐱</mml:mi><mml:mo>−</mml:mo><mml:mi>𝐩</mml:mi><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:mrow></mml:math></alternatives></inline-formula>.
+  Then, by definition the DWT of <inline-formula><alternatives>
+  <tex-math><![CDATA[\boldsymbol{x}\in\mathbb{Z}^{\text{{D}}}]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐱</mml:mi><mml:mo>∈</mml:mo><mml:msup><mml:mi>ℤ</mml:mi><mml:mtext mathvariant="normal">D</mml:mtext></mml:msup></mml:mrow></mml:math></alternatives></inline-formula>
+  is <inline-formula><alternatives>
+  <tex-math><![CDATA[\boldsymbol{x}\mapsto(\langle\boldsymbol{x},\psi_{m,\boldsymbol{p}}\rangle)_{m,\boldsymbol{p}}]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐱</mml:mi><mml:mo>↦</mml:mo><mml:msub><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mo stretchy="false" form="prefix">⟨</mml:mo><mml:mi>𝐱</mml:mi><mml:mo>,</mml:mo><mml:msub><mml:mi>ψ</mml:mi><mml:mrow><mml:mi>m</mml:mi><mml:mo>,</mml:mo><mml:mi>𝐩</mml:mi></mml:mrow></mml:msub><mml:mo stretchy="false" form="postfix">⟩</mml:mo><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mrow><mml:mi>m</mml:mi><mml:mo>,</mml:mo><mml:mi>𝐩</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:math></alternatives></inline-formula>,
+  where <inline-formula><alternatives>
+  <tex-math><![CDATA[m]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>m</mml:mi></mml:math></alternatives></inline-formula>
+  is the dilation parameter and <inline-formula><alternatives>
+  <tex-math><![CDATA[\boldsymbol{p}]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐩</mml:mi></mml:math></alternatives></inline-formula>
+  is the shift or translation parameter. The TFDWT Python package is a
+  simple standalone DWT and IDWT library with minimal dependencies that
+  allow computation with symbolic tensors and CUDA. This release
+  supports up to 3D forward and inverse transforms with various
+  orthogonal and biorthogonal wavelet families. A seamless package
+  upgrade for higher dimensional DWT is possible by separable
+  transforms. The boundary effects are taken care of with cyclic
+  convolutions instead of padding. The package supports orthogonal and
+  biorthogonal wavelets of different families having impulse responses
+  of diverse lengths. In this paper, we defined the
+  platform-independent, underlying mathematics for realizing fast DWT
+  and IDWT layers with filter bank structures having FIR filters,
+  downsamplers and upsamplers. Although our realization of the discrete
+  wavelet system is in TensorFlow 2, a seamless reproduction of the
+  computations is possible in other deep learning frameworks.</p>
+</sec>
+<sec id="discrete-wavelet-system-for-sequences">
+  <title>3 Discrete wavelet system for sequences</title>
+  <p>A discrete wavelet system has a lowpass scaling function and a
+  highpass wavelet. The realization of a discrete wavelet system with a
+  continuous one-dimensional (D=1) mother wavelet
+  <inline-formula><alternatives>
+  <tex-math><![CDATA[\psi\in L^{2}(\mathbb{R})]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>ψ</mml:mi><mml:mo>∈</mml:mo><mml:msup><mml:mi>L</mml:mi><mml:mn>2</mml:mn></mml:msup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>ℝ</mml:mi><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:mrow></mml:math></alternatives></inline-formula>
+  is by using the impulse responses of the scaling function and the
+  wavelet as Finite Impulse Response (FIR) filters
+  <inline-formula><alternatives>
+  <tex-math><![CDATA[g\big[n\big]]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>g</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">[</mml:mo><mml:mi>n</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">]</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
+  and <inline-formula><alternatives>
+  <tex-math><![CDATA[h\big[n\big]]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>h</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">[</mml:mo><mml:mi>n</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">]</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>.
+  <xref alt="[fig:bior31]" rid="figU003Abior31">[fig:bior31]</xref>
+  shows wavelets and scaling functions of the analysis and synthesis
+  bank of bior3.1 wavelet and their corresponding impulse responses are
+  shown in
+  <xref alt="[fig:bior31impulse]" rid="figU003Abior31impulse">[fig:bior31impulse]</xref>.
+  These FIR filters are the building blocks of a two-band perfect
+  reconstruction filter bank for realizing fast discrete wavelet
+  systems.
+  <xref alt="[fig:2BPRFB]" rid="figU003A2BPRFB">[fig:2BPRFB]</xref>
+  shows a two-band perfect reconstruction filter bank that operates on
+  one-dimensional inputs, i.e., sequences in
+  <inline-formula><alternatives>
+  <tex-math><![CDATA[l^{2}(\mathbb{\mathbb{Z}})]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msup><mml:mi>l</mml:mi><mml:mn>2</mml:mn></mml:msup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>ℤ</mml:mi><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:mrow></mml:math></alternatives></inline-formula>.
+  The analysis and synthesis bank in orthogonal wavelet systems have
+  identical lowpass and highpass FIR filters but differ in biorthogonal
+  wavelet systems. In biorthogonal wavelet filter banks,
+  <inline-formula><alternatives>
+  <tex-math><![CDATA[\tilde{g}\big[n\big]]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mover><mml:mi>g</mml:mi><mml:mo accent="true">̃</mml:mo></mml:mover><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">[</mml:mo><mml:mi>n</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">]</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
+  and <inline-formula><alternatives>
+  <tex-math><![CDATA[\tilde{h}\big[n\big]]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mover><mml:mi>h</mml:mi><mml:mo accent="true">̃</mml:mo></mml:mover><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">[</mml:mo><mml:mi>n</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">]</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
+  are the lowpass and highpass filters of the synthesis bank. The only
+  difference in the biorthogonal families like bior and rbio is the
+  interchange of the analysis and synthesis scaling and wavelets
+  functions, for example, in bior3.1 and rbio3.1.</p>
+  <fig>
+    <caption><p>Wavelets and scaling functions of bior3.1 analysis
+    (left) and synthesis
+    (right).<styled-content id="figU003Abior31"></styled-content></p></caption>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="waveBior31.png" />
+  </fig>
+  <fig>
+    <caption><p>Impulse responses of different bior3.1 analysis (left
+    two) and synthesis (right two) lowpass and highpass FIR
+    filters.<styled-content id="figU003Abior31impulse"></styled-content></p></caption>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="impulsebior31.png" />
+  </fig>
+  <sec id="circular-convolution-operators">
+    <title>3.1 Circular convolution operators</title>
+    <p>The four matrices in the two band perfect reconstruction filter
+    bank in
+    <xref alt="[fig:2BPRFB]" rid="figU003A2BPRFB">[fig:2BPRFB]</xref>
+    are — (i) <inline-formula><alternatives>
+    <tex-math><![CDATA[\boldsymbol{G}]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐆</mml:mi></mml:math></alternatives></inline-formula>
+    is lowpass analysis matrix, (ii) <inline-formula><alternatives>
+    <tex-math><![CDATA[\boldsymbol{H}]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐇</mml:mi></mml:math></alternatives></inline-formula>
+    is highpass analysis matrix, (iii) <inline-formula><alternatives>
+    <tex-math><![CDATA[\tilde{\boldsymbol{G}}]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mover><mml:mi>𝐆</mml:mi><mml:mo accent="true">̃</mml:mo></mml:mover></mml:math></alternatives></inline-formula>
+    is lowpass synthesis matrix and (iv) <inline-formula><alternatives>
+    <tex-math><![CDATA[\tilde{\boldsymbol{H}}]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mover><mml:mi>𝐇</mml:mi><mml:mo accent="true">̃</mml:mo></mml:mover></mml:math></alternatives></inline-formula>
+    is highpass synthesis matrix. These matrices are operators for
+    circular convolution, constructed by circular shifts of the
+    corresponding FIR filters <inline-formula><alternatives>
+    <tex-math><![CDATA[g\big[n-k\big]]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>g</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">[</mml:mo><mml:mi>n</mml:mi><mml:mo>−</mml:mo><mml:mi>k</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">]</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>,
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[h\big[n-k\big]]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>h</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">[</mml:mo><mml:mi>n</mml:mi><mml:mo>−</mml:mo><mml:mi>k</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">]</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>,
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[\tilde{g}\big[n-k\big]]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mover><mml:mi>g</mml:mi><mml:mo accent="true">̃</mml:mo></mml:mover><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">[</mml:mo><mml:mi>n</mml:mi><mml:mo>−</mml:mo><mml:mi>k</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">]</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
+    and <inline-formula><alternatives>
+    <tex-math><![CDATA[\tilde{h}\big[n-k\big]]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mover><mml:mi>h</mml:mi><mml:mo accent="true">̃</mml:mo></mml:mover><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">[</mml:mo><mml:mi>n</mml:mi><mml:mo>−</mml:mo><mml:mi>k</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">]</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>,
+    where <inline-formula><alternatives>
+    <tex-math><![CDATA[g=\tilde{g}]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>g</mml:mi><mml:mo>=</mml:mo><mml:mover><mml:mi>g</mml:mi><mml:mo accent="true">̃</mml:mo></mml:mover></mml:mrow></mml:math></alternatives></inline-formula>
+    and <inline-formula><alternatives>
+    <tex-math><![CDATA[h=\tilde{h}]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>h</mml:mi><mml:mo>=</mml:mo><mml:mover><mml:mi>h</mml:mi><mml:mo accent="true">̃</mml:mo></mml:mover></mml:mrow></mml:math></alternatives></inline-formula>
+    for orthogonal wavelets.</p>
+    <fig>
+      <caption><p>Two band perfect reconstruction filter
+      bank.<styled-content id="figU003A2BPRFB"></styled-content></p></caption>
+      <graphic mimetype="image" mime-subtype="jpeg" xlink:href="DWTFB.jpg" />
+    </fig>
+    <sec id="analysis-matrix">
+      <title>3.1.1 Analysis matrix</title>
+      <p>For a lowpass analysis FIR filter of length
+      <inline-formula><alternatives>
+      <tex-math><![CDATA[L]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>L</mml:mi></mml:math></alternatives></inline-formula>
+      and a input sequence of length <inline-formula><alternatives>
+      <tex-math><![CDATA[N]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>N</mml:mi></mml:math></alternatives></inline-formula>,
+      the circular convolution operator is a matrix
+      <inline-formula><alternatives>
+      <tex-math><![CDATA[\boldsymbol{G}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐆</mml:mi></mml:math></alternatives></inline-formula>
+      of shape <inline-formula><alternatives>
+      <tex-math><![CDATA[N\times N]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>N</mml:mi><mml:mo>×</mml:mo><mml:mi>N</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>.
+      A downsampling by two <inline-formula><alternatives>
+      <tex-math><![CDATA[f_{(\downarrow2)}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:msub><mml:mi>f</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mo>↓</mml:mo><mml:mn>2</mml:mn><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:msub></mml:math></alternatives></inline-formula>
+      of the output the convolution is equivalent to getting rid of the
+      even rows of <inline-formula><alternatives>
+      <tex-math><![CDATA[\boldsymbol{G}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐆</mml:mi></mml:math></alternatives></inline-formula>
+      to give
+      <inline-formula><tex-math><![CDATA[\frac{N}{2}\times{\small {N}}]]></tex-math></inline-formula>
+      operator <inline-formula><alternatives>
+      <tex-math><![CDATA[f_{(\downarrow2)}\boldsymbol{G}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>f</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mo>↓</mml:mo><mml:mn>2</mml:mn><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:msub><mml:mi>𝐆</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>.
+      Similarly, for the highpass analysis FIR filter of same wavelet
+      with convolution and downsampling is a
+      <inline-formula><tex-math><![CDATA[\frac{N}{2}\times{\small {N}}]]></tex-math></inline-formula>
+      operator <inline-formula><alternatives>
+      <tex-math><![CDATA[f_{(\downarrow2)}\boldsymbol{H}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>f</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mo>↓</mml:mo><mml:mn>2</mml:mn><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:msub><mml:mi>𝐇</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>.
+      The analysis matrix is,
+      <disp-formula><alternatives>
+      <tex-math><![CDATA[
+      \boldsymbol{A}=\left[\begin{array}{c}
+      f_{(\downarrow2)}\boldsymbol{G}\\
+      f_{(\downarrow2)}\boldsymbol{H}
+      \end{array}\right]_{N\times N}
+      ]]></tex-math>
+      <mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐀</mml:mi><mml:mo>=</mml:mo><mml:msub><mml:mrow><mml:mo stretchy="true" form="prefix">[</mml:mo><mml:mtable><mml:mtr><mml:mtd columnalign="center" style="text-align: center"><mml:msub><mml:mi>f</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mo>↓</mml:mo><mml:mn>2</mml:mn><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:msub><mml:mi>𝐆</mml:mi></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="center" style="text-align: center"><mml:msub><mml:mi>f</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mo>↓</mml:mo><mml:mn>2</mml:mn><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:msub><mml:mi>𝐇</mml:mi></mml:mtd></mml:mtr></mml:mtable><mml:mo stretchy="true" form="postfix">]</mml:mo></mml:mrow><mml:mrow><mml:mi>N</mml:mi><mml:mo>×</mml:mo><mml:mi>N</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:math></alternatives></disp-formula>
+      where <inline-formula><alternatives>
+      <tex-math><![CDATA[\boldsymbol{A}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐀</mml:mi></mml:math></alternatives></inline-formula>
+      is a <inline-formula><alternatives>
+      <tex-math><![CDATA[N\times N]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>N</mml:mi><mml:mo>×</mml:mo><mml:mi>N</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>
+      decimated circular convolution operator formed by combining the
+      lowpass and highpass decimated operators].</p>
+    </sec>
+    <sec id="synthesis-matrix">
+      <title>3.1.2 Synthesis matrix</title>
+      <p>The synthesis matrix <inline-formula><alternatives>
+      <tex-math><![CDATA[\boldsymbol{S}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐒</mml:mi></mml:math></alternatives></inline-formula>
+      is another <inline-formula><alternatives>
+      <tex-math><![CDATA[N\times N]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>N</mml:mi><mml:mo>×</mml:mo><mml:mi>N</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>
+      decimated circular convolution operator as given by equation
+      [eq:SynthesisMatrix],</p>
+      <p><disp-formula><alternatives>
+      <tex-math><![CDATA[
+      \boldsymbol{S}=\left[\begin{array}{c}
+      f_{(\downarrow2)}\tilde{\boldsymbol{G}}\\
+      f_{(\downarrow2)}\tilde{\boldsymbol{H}}
+      \end{array}\right]_{N\times N}^{T}
+      ]]></tex-math>
+      <mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐒</mml:mi><mml:mo>=</mml:mo><mml:msubsup><mml:mrow><mml:mo stretchy="true" form="prefix">[</mml:mo><mml:mtable><mml:mtr><mml:mtd columnalign="center" style="text-align: center"><mml:msub><mml:mi>f</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mo>↓</mml:mo><mml:mn>2</mml:mn><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:msub><mml:mover><mml:mi>𝐆</mml:mi><mml:mo accent="true">̃</mml:mo></mml:mover></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="center" style="text-align: center"><mml:msub><mml:mi>f</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mo>↓</mml:mo><mml:mn>2</mml:mn><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:msub><mml:mover><mml:mi>𝐇</mml:mi><mml:mo accent="true">̃</mml:mo></mml:mover></mml:mtd></mml:mtr></mml:mtable><mml:mo stretchy="true" form="postfix">]</mml:mo></mml:mrow><mml:mrow><mml:mi>N</mml:mi><mml:mo>×</mml:mo><mml:mi>N</mml:mi></mml:mrow><mml:mi>T</mml:mi></mml:msubsup></mml:mrow></mml:math></alternatives></disp-formula></p>
+      <p>where <inline-formula><alternatives>
+      <tex-math><![CDATA[\tilde{\boldsymbol{G}}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mover><mml:mi>𝐆</mml:mi><mml:mo accent="true">̃</mml:mo></mml:mover></mml:math></alternatives></inline-formula>
+      and <inline-formula><alternatives>
+      <tex-math><![CDATA[\tilde{\boldsymbol{H}}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mover><mml:mi>𝐇</mml:mi><mml:mo accent="true">̃</mml:mo></mml:mover></mml:math></alternatives></inline-formula>
+      are matrices formed by the lowpass and highpass synthesis FIR
+      filters. The above is a general representation for both orthogonal
+      and biorthogonal wavelets families where for orthogonal wavelets,
+      <inline-formula><alternatives>
+      <tex-math><![CDATA[\tilde{\boldsymbol{G}}=\boldsymbol{G}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mover><mml:mi>𝐆</mml:mi><mml:mo accent="true">̃</mml:mo></mml:mover><mml:mo>=</mml:mo><mml:mi>𝐆</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>,
+      <inline-formula><alternatives>
+      <tex-math><![CDATA[\tilde{\boldsymbol{H}}=\boldsymbol{H}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mover><mml:mi>𝐇</mml:mi><mml:mo accent="true">̃</mml:mo></mml:mover><mml:mo>=</mml:mo><mml:mi>𝐇</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>
+      and thus <inline-formula><alternatives>
+      <tex-math><![CDATA[\boldsymbol{S}=\boldsymbol{A}^{T}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐒</mml:mi><mml:mo>=</mml:mo><mml:msup><mml:mi>𝐀</mml:mi><mml:mi>T</mml:mi></mml:msup></mml:mrow></mml:math></alternatives></inline-formula>.</p>
+      <p>A two-band perfect reconstruction discrete wavelet system for
+      one-dimensional inputs is given by the analysis equation and the
+      synthesis equation,</p>
+      <p><disp-formula><alternatives>
+      <tex-math><![CDATA[
+      \boldsymbol{q}  =\text{{DWT}}\big(\boldsymbol{x}\big)\text{{ or, }}\boldsymbol{q}=\big(\boldsymbol{A}\boldsymbol{x}^{T}\big)^{T}
+      \text{     —Analysis}]]></tex-math>
+      <mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐪</mml:mi><mml:mo>=</mml:mo><mml:mtext mathvariant="normal">DWT</mml:mtext><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:mi>𝐱</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo><mml:mrow><mml:mspace width="0.333em"></mml:mspace><mml:mtext mathvariant="normal"> or, </mml:mtext><mml:mspace width="0.333em"></mml:mspace></mml:mrow><mml:mi>𝐪</mml:mi><mml:mo>=</mml:mo><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:mi>𝐀</mml:mi><mml:msup><mml:mi>𝐱</mml:mi><mml:mi>T</mml:mi></mml:msup><mml:msup><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo><mml:mi>T</mml:mi></mml:msup><mml:mrow><mml:mspace width="0.333em"></mml:mspace><mml:mtext mathvariant="normal"> —Analysis</mml:mtext></mml:mrow></mml:mrow></mml:math></alternatives></disp-formula></p>
+      <p><disp-formula><alternatives>
+      <tex-math><![CDATA[
+      \boldsymbol{x}  =\text{{IDWT}}\big(\boldsymbol{q}\big)\text{{ or, }}\boldsymbol{x}=\big(\boldsymbol{S}\boldsymbol{q}^{T}\big)^{T}\text{—Synthesis} 
+      ]]></tex-math>
+      <mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐱</mml:mi><mml:mo>=</mml:mo><mml:mtext mathvariant="normal">IDWT</mml:mtext><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:mi>𝐪</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo><mml:mrow><mml:mspace width="0.333em"></mml:mspace><mml:mtext mathvariant="normal"> or, </mml:mtext><mml:mspace width="0.333em"></mml:mspace></mml:mrow><mml:mi>𝐱</mml:mi><mml:mo>=</mml:mo><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:mi>𝐒</mml:mi><mml:msup><mml:mi>𝐪</mml:mi><mml:mi>T</mml:mi></mml:msup><mml:msup><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo><mml:mi>T</mml:mi></mml:msup><mml:mtext mathvariant="normal">—Synthesis</mml:mtext></mml:mrow></mml:math></alternatives></disp-formula></p>
+      <p>where <inline-formula><alternatives>
+      <tex-math><![CDATA[\boldsymbol{A}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐀</mml:mi></mml:math></alternatives></inline-formula>
+      and <inline-formula><alternatives>
+      <tex-math><![CDATA[\boldsymbol{S}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐒</mml:mi></mml:math></alternatives></inline-formula>
+      are analysis and synthesis matrices,
+      <inline-formula><alternatives>
+      <tex-math><![CDATA[\boldsymbol{x}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐱</mml:mi></mml:math></alternatives></inline-formula>
+      is a input sequence and <inline-formula><alternatives>
+      <tex-math><![CDATA[\boldsymbol{q}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐪</mml:mi></mml:math></alternatives></inline-formula>
+      has a distinct lowpass and a highpass subband.</p>
+      <p><bold>Example 1.</bold> Given, a sequence
+      <inline-formula><alternatives>
+      <tex-math><![CDATA[\boldsymbol{x}\in\mathbb{R}^{8}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐱</mml:mi><mml:mo>∈</mml:mo><mml:msup><mml:mi>ℝ</mml:mi><mml:mn>8</mml:mn></mml:msup></mml:mrow></mml:math></alternatives></inline-formula>
+      or <inline-formula><alternatives>
+      <tex-math><![CDATA[N=8]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>N</mml:mi><mml:mo>=</mml:mo><mml:mn>8</mml:mn></mml:mrow></mml:math></alternatives></inline-formula>
+      and FIR filters length <inline-formula><alternatives>
+      <tex-math><![CDATA[L=6]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>L</mml:mi><mml:mo>=</mml:mo><mml:mn>6</mml:mn></mml:mrow></mml:math></alternatives></inline-formula>.</p>
+      <p><disp-formula><tex-math><![CDATA[
+      \text{{LPF and downsampling }}f_{(\downarrow2)}\boldsymbol{G}   ={\small {\left[\begin{array}{cccccccc}
+      g_{1} & g_{0} & 0 & 0 & g_{5} & g_{4} & g_{3} & g_{2}\\
+      g_{3} & g_{2} & g_{1} & g_{0} & 0 & 0 & g_{5} & g_{4}\\
+      g_{5} & g_{4} & g_{3} & g_{2} & g_{1} & g_{0} & 0 & 0\\
+      0 & 0 & g_{5} & g_{4} & g_{3} & g_{2} & g_{1} & g_{0}
+      \end{array}\right]_{\frac{N}{2}\times{N}}}}
+      ]]></tex-math></disp-formula></p>
+      <p><disp-formula><tex-math><![CDATA[
+      \text{{HPF and downsampling }}f_{(\downarrow2)}\boldsymbol{H}   ={\small {\left[\begin{array}{cccccccc}
+      h_{1} & h_{0} & 0 & 0 & h_{5} & h_{4} & h_{3} & h_{2}\\
+      h_{3} & h_{2} & h_{1} & h_{0} & 0 & 0 & h_{5} & h_{4}\\
+      h_{5} & h_{4} & h_{3} & h_{2} & h_{1} & h_{0} & 0 & 0\\
+      0 & 0 & h_{5} & h_{4} & h_{3} & h_{2} & h_{1} & h_{0}
+      \end{array}\right]_{\frac{N}{2}\times{\small {N}}}}}
+      ]]></tex-math></disp-formula></p>
+      <p><disp-formula><tex-math><![CDATA[
+      \text{{Analysis matrix is }}\boldsymbol{A}  ={\small {\left[\begin{array}{cccccccc}
+      g_{1} & g_{0} & 0 & 0 & g_{5} & g_{4} & g_{3} & g_{2}\\
+      g_{3} & g_{2} & g_{1} & g_{0} & 0 & 0 & g_{5} & g_{4}\\
+      g_{5} & g_{4} & g_{3} & g_{2} & g_{1} & g_{0} & 0 & 0\\
+      0 & 0 & g_{5} & g_{4} & g_{3} & g_{2} & g_{1} & g_{0}\\
+      h_{1} & h_{0} & 0 & 0 & h_{5} & h_{4} & h_{3} & h_{2}\\
+      h_{3} & h_{2} & h_{1} & h_{0} & 0 & 0 & h_{5} & h_{4}\\
+      h_{5} & h_{4} & h_{3} & h_{2} & h_{1} & h_{0} & 0 & 0\\
+      0 & 0 & h_{5} & h_{4} & h_{3} & h_{2} & h_{1} & h_{0}
+      \end{array}\right]_{{N}\times{N}}}}
+      ]]></tex-math></disp-formula></p>
+      <p>Similarly,</p>
+      <p><disp-formula><tex-math><![CDATA[
+      \text{{Synthesis matrix is }}\boldsymbol{S} ={\small {\left[\begin{array}{cccccccc}
+      \tilde{g}_{1} & \tilde{g}_{0} & 0 & 0 & \tilde{g}_{5} & \tilde{g}_{4} & \tilde{g}_{3} & \tilde{g}_{2}\\
+      \tilde{g}_{3} & \tilde{g}_{2} & \tilde{g}_{1} & \tilde{g}_{0} & 0 & 0 & \tilde{g}_{5} & \tilde{g}_{4}\\
+      \tilde{g}_{5} & \tilde{g}_{4} & \tilde{g}_{3} & \tilde{g}_{2} & \tilde{g}_{1} & \tilde{g}_{0} & 0 & 0\\
+      0 & 0 & \tilde{g}_{5} & \tilde{g}_{4} & \tilde{g}_{3} & \tilde{g}_{2} & \tilde{g}_{1} & \tilde{g}_{0}\\
+      \tilde{h}_{1} & \tilde{h}_{0} & 0 & 0 & \tilde{h}_{5} & \tilde{h}_{4} & \tilde{h}_{3} & \tilde{h}_{2}\\
+      \tilde{h}_{3} & \tilde{h}_{2} & \tilde{h}_{1} & \tilde{h}_{0} & 0 & 0 & \tilde{h}_{5} & \tilde{h}_{4}\\
+      \tilde{h}_{5} & \tilde{h}_{4} & \tilde{h}_{3} & \tilde{h}_{2} & \tilde{h}_{1} & \tilde{h}_{0} & 0 & 0\\
+      0 & 0 & \tilde{h}_{5} & \tilde{h}_{4} & \tilde{h}_{3} & \tilde{h}_{2} & \tilde{h}_{1} & \tilde{h}_{0}
+      \end{array}\right]_{{N}\times{N}}}}
+      ]]></tex-math></disp-formula></p>
+      <p>The DWT of <inline-formula><alternatives>
+      <tex-math><![CDATA[\boldsymbol{x}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐱</mml:mi></mml:math></alternatives></inline-formula>
+      produces subbbands,</p>
+      <p><disp-formula><alternatives>
+      <tex-math><![CDATA[
+      \boldsymbol{q}=\text{{DWT}}\big(\boldsymbol{x}\big)\text{{ or, }}\boldsymbol{q=A}\boldsymbol{x}
+      ]]></tex-math>
+      <mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐪</mml:mi><mml:mo>=</mml:mo><mml:mtext mathvariant="normal">DWT</mml:mtext><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:mi>𝐱</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo><mml:mrow><mml:mspace width="0.333em"></mml:mspace><mml:mtext mathvariant="normal"> or, </mml:mtext><mml:mspace width="0.333em"></mml:mspace></mml:mrow><mml:mrow><mml:mi>𝐪</mml:mi><mml:mo mathvariant="bold">=</mml:mo><mml:mi>𝐀</mml:mi></mml:mrow><mml:mi>𝐱</mml:mi></mml:mrow></mml:math></alternatives></disp-formula></p>
+      <p>Perfect reconstruction,</p>
+      <p><disp-formula><alternatives>
+      <tex-math><![CDATA[
+      \boldsymbol{x}=\text{{IDWT}}\big(\boldsymbol{q}\big)\text{{ or, }}\boldsymbol{x}=\boldsymbol{S}\boldsymbol{q}
+      ]]></tex-math>
+      <mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐱</mml:mi><mml:mo>=</mml:mo><mml:mtext mathvariant="normal">IDWT</mml:mtext><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:mi>𝐪</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo><mml:mrow><mml:mspace width="0.333em"></mml:mspace><mml:mtext mathvariant="normal"> or, </mml:mtext><mml:mspace width="0.333em"></mml:mspace></mml:mrow><mml:mi>𝐱</mml:mi><mml:mo>=</mml:mo><mml:mi>𝐒</mml:mi><mml:mi>𝐪</mml:mi></mml:mrow></mml:math></alternatives></disp-formula></p>
+    </sec>
+  </sec>
+  <sec id="dwt-1d-layer">
+    <title>3.2 DWT 1D layer</title>
+    <p>A DWT 1D layer takes batched, multichannel sequences of shape
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[(\text{{batch, length, channels}})]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, length, channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
+    as input and computes subbands of each sequence using equation
+    [eq:DWToneSequence]. The shape of the DWT 1D layer output after
+    grouping the lowpass and highpass subbands of each sequence is
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[(\text{batch}, \text{length}/2, 2 \times \text{channels})]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch</mml:mtext><mml:mo>,</mml:mo><mml:mtext mathvariant="normal">length</mml:mtext><mml:mi>/</mml:mi><mml:mn>2</mml:mn><mml:mo>,</mml:mo><mml:mn>2</mml:mn><mml:mo>×</mml:mo><mml:mtext mathvariant="normal">channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>.</p>
+  </sec>
+  <sec id="idwt-1d-layer">
+    <title>3.3 IDWT 1D layer</title>
+    <p>An IDWT 1D layer takes batched, multichannel subbands of shape
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[(\text{batch}, \text{length}/2, 2 \times \text{channels})]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch</mml:mtext><mml:mo>,</mml:mo><mml:mtext mathvariant="normal">length</mml:mtext><mml:mi>/</mml:mi><mml:mn>2</mml:mn><mml:mo>,</mml:mo><mml:mn>2</mml:mn><mml:mo>×</mml:mo><mml:mtext mathvariant="normal">channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>.
+    as input and reconstructs each batched, multichannel sequence using
+    equation [eq:IDWToneSequence]. The shape of the IDWT 1D layer output
+    is <inline-formula><alternatives>
+    <tex-math><![CDATA[(\text{{batch, length, channels}})]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, length, channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>.</p>
+  </sec>
+</sec>
+<sec id="higher-dimensional-discrete-wavelet-systems">
+  <title>4 Higher dimensional discrete wavelet systems</title>
+  <p>In sequences (1D), the DWT 1D applies to the only independent
+  variable. To achieve high-dimensional DWT, the DWT 1D needs to be
+  applied separably to all the independent variables one after the
+  other. For example, the DWT of an image (2D) is a row-wise DWT 1D
+  followed by a column-wise DWT 1D. Similarly, the reconstruction is
+  column-wise IDWT 1D followed by a row-wise IDWT 1D.</p>
+  <sec id="two-dimensional-discrete-wavelet-system">
+    <title>4.1 Two-dimensional discrete wavelet system</title>
+    <p>The pixel values in an image are a function of two independent
+    spatial axes. A DWT 2D filter bank is a separable transform with
+    row-wise filtering followed by column-wise filtering that yields
+    four subbands - LL, LH, HL and HH. A two-dimensional discrete
+    wavelet system is given by,</p>
+    <p><disp-formula><tex-math><![CDATA[
+    \boldsymbol{q}  =\text{{DWT}}\big(\boldsymbol{x}\big):=\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{021})_{021}^{T} \text{\hspace{2.1cm}—Analysis} 
+    ]]></tex-math></disp-formula></p>
+    <p><disp-formula><tex-math><![CDATA[
+    \boldsymbol{x}  =\text{{IDWT}}\big(\boldsymbol{q}\big):=\boldsymbol{S}(\boldsymbol{S}\left[\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{021}^{T})_{021}^{T}\right]_{021}^{T})_{021}^{T}\text{\hspace{0.2cm}—Synthesis} 
+    ]]></tex-math></disp-formula></p>
+    <p>where, <inline-formula><alternatives>
+    <tex-math><![CDATA[\boldsymbol{A}]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐀</mml:mi></mml:math></alternatives></inline-formula>
+    and <inline-formula><alternatives>
+    <tex-math><![CDATA[\boldsymbol{S}]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐒</mml:mi></mml:math></alternatives></inline-formula>
+    are the same analysis and synthesis matrices defined for
+    one-dimensional wavelet system.
+    <xref alt="[fig:subdband2d]" rid="figU003Asubdband2d">[fig:subdband2d]</xref>
+    shows an <inline-formula><alternatives>
+    <tex-math><![CDATA[N\times N]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>N</mml:mi><mml:mo>×</mml:mo><mml:mi>N</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>
+    image and its four localized spatial-frequency subbands after DWT.
+    Here, the low-frequency band is LL, and the other three are
+    high-frequency subbands representing horizontal, vertical and
+    diagonal features.
+    <xref alt="[fig:2BPRFB-2]" rid="figU003A2BPRFB-2">[fig:2BPRFB-2]</xref>
+    illustrates a separable 2D DWT perfect reconstruction filter bank.
+    The 2D layers operate on batched, multichannel tensors of shape
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[(\text{{batch, height, width, channels}})]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, height, width, channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>,
+    where each image is of shape height and width.
+    <xref alt="[fig:2DDWTlayer]" rid="figU003A2DDWTlayer">[fig:2DDWTlayer]</xref>
+    illustrates input, output and perfect reconstruction by DWT 2D and
+    IDWT 2D layers. The Multiresolution Encoder-Decoder Convolutional
+    Neural Network in
+    (<xref alt="Tarafdar et al., 2025" rid="ref-tarafdar2025multiresolution" ref-type="bibr">Tarafdar
+    et al., 2025</xref>) uses these layers.</p>
+    <fig>
+      <caption><p>An image of shape (left) and spatial-frequency tiled
+      subbands (right) after a level-1 DWT 2D
+      decomposition.<styled-content id="figU003Asubdband2d"></styled-content></p></caption>
+      <graphic mimetype="image" mime-subtype="jpeg" xlink:href="SpatialFrequencyTilingLv1.jpg" />
+    </fig>
+    <fig>
+      <caption><p>Separable DWT 2D perfect reconstruction filter
+      bank.<styled-content id="figU003A2BPRFB-2"></styled-content></p></caption>
+      <graphic mimetype="image" mime-subtype="jpeg" xlink:href="DWTFB2D.jpg" />
+    </fig>
+    <sec id="dwt-2d-layer">
+      <title>4.1.1 DWT 2D layer</title>
+      <p>A DWT 2D layer operates on input tensors of shape
+      <inline-formula><alternatives>
+      <tex-math><![CDATA[(\text{{batch, height, width, channels}})]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, height, width, channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
+      and produces an output of shape <inline-formula><alternatives>
+      <tex-math><![CDATA[(\text{batch}, \text{height}/2, \text{width}/2, 4\times \text{channels})]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch</mml:mtext><mml:mo>,</mml:mo><mml:mtext mathvariant="normal">height</mml:mtext><mml:mi>/</mml:mi><mml:mn>2</mml:mn><mml:mo>,</mml:mo><mml:mtext mathvariant="normal">width</mml:mtext><mml:mi>/</mml:mi><mml:mn>2</mml:mn><mml:mo>,</mml:mo><mml:mn>4</mml:mn><mml:mo>×</mml:mo><mml:mtext mathvariant="normal">channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
+      as described in Algorithm 2a.</p>
+      <p><bold>Algorithm 2a</bold></p>
+      <list list-type="order">
+        <list-item>
+          <p>Input <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{X}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐗</mml:mi></mml:math></alternatives></inline-formula>
+          of shape <inline-formula><alternatives>
+          <tex-math><![CDATA[(\text{{batch, height, width, channels}})]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, height, width, channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>.</p>
+        </list-item>
+        <list-item>
+          <p>Generate analysis matrix <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{A}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐀</mml:mi></mml:math></alternatives></inline-formula>
+          using <inline-formula><alternatives>
+          <tex-math><![CDATA[\text{{height}}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mtext mathvariant="normal">height</mml:mtext></mml:math></alternatives></inline-formula>
+          and <inline-formula><alternatives>
+          <tex-math><![CDATA[\text{{width}}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mtext mathvariant="normal">width</mml:mtext></mml:math></alternatives></inline-formula>
+          of input.</p>
+        </list-item>
+        <list-item>
+          <p>For each batched channel <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{x}_{c}\in\boldsymbol{X}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>𝐱</mml:mi><mml:mi>c</mml:mi></mml:msub><mml:mo>∈</mml:mo><mml:mi>𝐗</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>
+          of shape <inline-formula><alternatives>
+          <tex-math><![CDATA[(\text{{batch, height, width}})]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, height, width</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>:
+          (omitting suffix <inline-formula><alternatives>
+          <tex-math><![CDATA[c]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>c</mml:mi></mml:math></alternatives></inline-formula>
+          in <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{x}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐱</mml:mi></mml:math></alternatives></inline-formula>
+          below for simplicity of notation)</p>
+          <list list-type="order">
+            <list-item>
+              <p>Row-wise batch DWT: <inline-formula><alternatives>
+              <tex-math><![CDATA[\boldsymbol{A}\boldsymbol{x}_{021}^{T}:=\text{Einsum} \big(ij,bjk \rightarrow bik \big)]]></tex-math>
+              <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐀</mml:mi><mml:msubsup><mml:mi>𝐱</mml:mi><mml:mn>021</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo>:=</mml:mo><mml:mtext mathvariant="normal">Einsum</mml:mtext><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:mi>i</mml:mi><mml:mi>j</mml:mi><mml:mo>,</mml:mo><mml:mi>b</mml:mi><mml:mi>j</mml:mi><mml:mi>k</mml:mi><mml:mo>→</mml:mo><mml:mi>b</mml:mi><mml:mi>i</mml:mi><mml:mi>k</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula></p>
+            </list-item>
+            <list-item>
+              <p>Column-wise batch DWT: <inline-formula><alternatives>
+              <tex-math><![CDATA[\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{021}^{T})_{021}^{T} :=\text{Einsum} \big(ij,bjk\rightarrow bik\big)]]></tex-math>
+              <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐀</mml:mi><mml:msubsup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐀</mml:mi><mml:msubsup><mml:mi>𝐱</mml:mi><mml:mn>021</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mn>021</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo>:=</mml:mo><mml:mtext mathvariant="normal">Einsum</mml:mtext><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:mi>i</mml:mi><mml:mi>j</mml:mi><mml:mo>,</mml:mo><mml:mi>b</mml:mi><mml:mi>j</mml:mi><mml:mi>k</mml:mi><mml:mo>→</mml:mo><mml:mi>b</mml:mi><mml:mi>i</mml:mi><mml:mi>k</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula></p>
+              <p>Or, equivalently, DWT of a batched channel
+              <inline-formula><alternatives>
+              <tex-math><![CDATA[\boldsymbol{x}]]></tex-math>
+              <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐱</mml:mi></mml:math></alternatives></inline-formula>
+              is,</p>
+              <p><disp-formula><alternatives>
+              <tex-math><![CDATA[\boldsymbol{q}_{c}=\text{{DWT}}\big(\boldsymbol{x}\big)\text{{ or, }}\boldsymbol{q}_{c}=\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{021})_{021}^{T}]]></tex-math>
+              <mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>𝐪</mml:mi><mml:mi>c</mml:mi></mml:msub><mml:mo>=</mml:mo><mml:mtext mathvariant="normal">DWT</mml:mtext><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:mi>𝐱</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo><mml:mrow><mml:mspace width="0.333em"></mml:mspace><mml:mtext mathvariant="normal"> or, </mml:mtext><mml:mspace width="0.333em"></mml:mspace></mml:mrow><mml:msub><mml:mi>𝐪</mml:mi><mml:mi>c</mml:mi></mml:msub><mml:mo>=</mml:mo><mml:mi>𝐀</mml:mi><mml:msubsup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐀</mml:mi><mml:msub><mml:mi>𝐱</mml:mi><mml:mn>021</mml:mn></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mn>021</mml:mn><mml:mi>T</mml:mi></mml:msubsup></mml:mrow></mml:math></alternatives></disp-formula></p>
+            </list-item>
+          </list>
+        </list-item>
+        <list-item>
+          <p>Stacking for all <inline-formula><alternatives>
+          <tex-math><![CDATA[c]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>c</mml:mi></mml:math></alternatives></inline-formula>
+          channels: <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{Q}:=\big(\boldsymbol{q}_{c}\big)_{\forall c}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐐</mml:mi><mml:mo>:=</mml:mo><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:msub><mml:mi>𝐪</mml:mi><mml:mi>c</mml:mi></mml:msub><mml:msub><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo><mml:mrow><mml:mo>∀</mml:mo><mml:mi>c</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:math></alternatives></inline-formula>
+          to a shape <inline-formula><alternatives>
+          <tex-math><![CDATA[(\text{{batch, height, width, channels}})]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, height, width, channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>.</p>
+        </list-item>
+        <list-item>
+          <p>Group subbands and return an output
+          <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{Q}^{(\text{{grouped}})}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:msup><mml:mi>𝐐</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">grouped</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:msup></mml:math></alternatives></inline-formula>
+          of shape <inline-formula><alternatives>
+          <tex-math><![CDATA[(\text{batch}, \text{height}/2, \text{width}/2, 4\times\text{channels})]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch</mml:mtext><mml:mo>,</mml:mo><mml:mtext mathvariant="normal">height</mml:mtext><mml:mi>/</mml:mi><mml:mn>2</mml:mn><mml:mo>,</mml:mo><mml:mtext mathvariant="normal">width</mml:mtext><mml:mi>/</mml:mi><mml:mn>2</mml:mn><mml:mo>,</mml:mo><mml:mn>4</mml:mn><mml:mo>×</mml:mo><mml:mtext mathvariant="normal">channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula></p>
+          <p specific-use="wrapper">
+            <code language="python">    # Grouping four subbands in DWT 2D
+    mid = int(LLLHHLHH.shape[1]/2)
+    LL = LLLHHLHH[:,:mid,:mid,:]
+    LH = LLLHHLHH[:,mid:,:mid,:]
+    HL = LLLHHLHH[:,:mid,mid:,:]
+    HH = LLLHHLHH[:,mid:,mid:,:]
+    output = Concatenate([LL, LH, HL, HH], axis=-1)</code>
+          </p>
+        </list-item>
+      </list>
+    </sec>
+    <sec id="idwt-2d-layer">
+      <title>4.1.2 IDWT 2D layer</title>
+      <p>An IDWT 3D layer operates on input tensors of shape
+      <inline-formula><alternatives>
+      <tex-math><![CDATA[(\text{batch}, \text{height}/2, \text{width}/2, 4\times \text{channels})]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch</mml:mtext><mml:mo>,</mml:mo><mml:mtext mathvariant="normal">height</mml:mtext><mml:mi>/</mml:mi><mml:mn>2</mml:mn><mml:mo>,</mml:mo><mml:mtext mathvariant="normal">width</mml:mtext><mml:mi>/</mml:mi><mml:mn>2</mml:mn><mml:mo>,</mml:mo><mml:mn>4</mml:mn><mml:mo>×</mml:mo><mml:mtext mathvariant="normal">channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
+      and produces an output of shape <inline-formula><alternatives>
+      <tex-math><![CDATA[(\text{{batch, height, width, channels}})]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, height, width, channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
+      as described in Algorithm 2b.</p>
+      <p><bold>Algorithm 2b</bold></p>
+      <list list-type="order">
+        <list-item>
+          <p>Input <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{Q}^{(\text{{grouped}})}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:msup><mml:mi>𝐐</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">grouped</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:msup></mml:math></alternatives></inline-formula>
+          of shape <inline-formula><alternatives>
+          <tex-math><![CDATA[(\text{batch}, \text{height}/2, \text{width}/2, 4\times\text{channels})]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch</mml:mtext><mml:mo>,</mml:mo><mml:mtext mathvariant="normal">height</mml:mtext><mml:mi>/</mml:mi><mml:mn>2</mml:mn><mml:mo>,</mml:mo><mml:mtext mathvariant="normal">width</mml:mtext><mml:mi>/</mml:mi><mml:mn>2</mml:mn><mml:mo>,</mml:mo><mml:mn>4</mml:mn><mml:mo>×</mml:mo><mml:mtext mathvariant="normal">channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula></p>
+        </list-item>
+        <list-item>
+          <p>Ungroup the subbands to get <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{Q}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐐</mml:mi></mml:math></alternatives></inline-formula>
+          of shape <inline-formula><alternatives>
+          <tex-math><![CDATA[(\text{{batch, height, width, channels}})]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, height, width, channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula></p>
+        </list-item>
+        <list-item>
+          <p>Generate synthesis matrix <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{S}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐒</mml:mi></mml:math></alternatives></inline-formula>
+          using <inline-formula><alternatives>
+          <tex-math><![CDATA[\text{{height}}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mtext mathvariant="normal">height</mml:mtext></mml:math></alternatives></inline-formula>
+          and <inline-formula><alternatives>
+          <tex-math><![CDATA[\text{{width}}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mtext mathvariant="normal">width</mml:mtext></mml:math></alternatives></inline-formula>
+          of <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{Q}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐐</mml:mi></mml:math></alternatives></inline-formula>.</p>
+        </list-item>
+        <list-item>
+          <p>For each batched channel <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{q}_{c}\in\boldsymbol{Q}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>𝐪</mml:mi><mml:mi>c</mml:mi></mml:msub><mml:mo>∈</mml:mo><mml:mi>𝐐</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>
+          of shape <inline-formula><alternatives>
+          <tex-math><![CDATA[(\text{{batch, height, width}})]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, height, width</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>:
+          (omitting suffix <inline-formula><alternatives>
+          <tex-math><![CDATA[c]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>c</mml:mi></mml:math></alternatives></inline-formula>
+          in <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{q}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐪</mml:mi></mml:math></alternatives></inline-formula>
+          below for simplicity of notation)</p>
+          <list list-type="order">
+            <list-item>
+              <p>Row-wise batch IDWT: <inline-formula><alternatives>
+              <tex-math><![CDATA[\boldsymbol{S}\boldsymbol{q}_{021}^{T}:=\text{Einsum}\big(ij,bjk\rightarrow bik\big)]]></tex-math>
+              <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐒</mml:mi><mml:msubsup><mml:mi>𝐪</mml:mi><mml:mn>021</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo>:=</mml:mo><mml:mtext mathvariant="normal">Einsum</mml:mtext><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:mi>i</mml:mi><mml:mi>j</mml:mi><mml:mo>,</mml:mo><mml:mi>b</mml:mi><mml:mi>j</mml:mi><mml:mi>k</mml:mi><mml:mo>→</mml:mo><mml:mi>b</mml:mi><mml:mi>i</mml:mi><mml:mi>k</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula></p>
+            </list-item>
+            <list-item>
+              <p>Column wise batch IDWT: <inline-formula><alternatives>
+              <tex-math><![CDATA[\boldsymbol{S}(\boldsymbol{S}\boldsymbol{q}_{021}^{T})_{021}^{T}:=\text{Einsum}\big(ij,bjk\rightarrow bik\big)]]></tex-math>
+              <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐒</mml:mi><mml:msubsup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐒</mml:mi><mml:msubsup><mml:mi>𝐪</mml:mi><mml:mn>021</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mn>021</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo>:=</mml:mo><mml:mtext mathvariant="normal">Einsum</mml:mtext><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:mi>i</mml:mi><mml:mi>j</mml:mi><mml:mo>,</mml:mo><mml:mi>b</mml:mi><mml:mi>j</mml:mi><mml:mi>k</mml:mi><mml:mo>→</mml:mo><mml:mi>b</mml:mi><mml:mi>i</mml:mi><mml:mi>k</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula></p>
+              <p>or equivalently, a perfect reconstruction,</p>
+              <p><disp-formula><alternatives>
+              <tex-math><![CDATA[\boldsymbol{x}=\text{{IDWT}}\big(\boldsymbol{q}\big)\text{{ or, }}\boldsymbol{x}=\boldsymbol{S}(\boldsymbol{S}\boldsymbol{q}_{021}^{T})_{021}^{T}]]></tex-math>
+              <mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐱</mml:mi><mml:mo>=</mml:mo><mml:mtext mathvariant="normal">IDWT</mml:mtext><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:mi>𝐪</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo><mml:mrow><mml:mspace width="0.333em"></mml:mspace><mml:mtext mathvariant="normal"> or, </mml:mtext><mml:mspace width="0.333em"></mml:mspace></mml:mrow><mml:mi>𝐱</mml:mi><mml:mo>=</mml:mo><mml:mi>𝐒</mml:mi><mml:msubsup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐒</mml:mi><mml:msubsup><mml:mi>𝐪</mml:mi><mml:mn>021</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mn>021</mml:mn><mml:mi>T</mml:mi></mml:msubsup></mml:mrow></mml:math></alternatives></disp-formula></p>
+              <p>where, <inline-formula><alternatives>
+              <tex-math><![CDATA[\boldsymbol{S}=\boldsymbol{A}^{T}]]></tex-math>
+              <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐒</mml:mi><mml:mo>=</mml:mo><mml:msup><mml:mi>𝐀</mml:mi><mml:mi>T</mml:mi></mml:msup></mml:mrow></mml:math></alternatives></inline-formula>
+              for orthogonal wavelets</p>
+            </list-item>
+          </list>
+        </list-item>
+        <list-item>
+          <p>Layer output (perfect reconstruction):
+          <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{X}:=\big(\boldsymbol{x}_{c}\big)_{\forall c}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐗</mml:mi><mml:mo>:=</mml:mo><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:msub><mml:mi>𝐱</mml:mi><mml:mi>c</mml:mi></mml:msub><mml:msub><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo><mml:mrow><mml:mo>∀</mml:mo><mml:mi>c</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:math></alternatives></inline-formula>
+          is of shape <inline-formula><alternatives>
+          <tex-math><![CDATA[(\text{{batch, height, width, channels}})]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, height, width, channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula></p>
+        </list-item>
+      </list>
+      <fig>
+        <caption><p>DWT decomposition and perfect reconstruction of a
+        tensor , where is DWT 2D layer and is IDWT 2D
+        layer.<styled-content id="figU003A2DDWTlayer"></styled-content></p></caption>
+        <graphic mimetype="image" mime-subtype="jpeg" xlink:href="DWT2DIDWT2D_PRlayer.jpg" />
+      </fig>
+    </sec>
+  </sec>
+  <sec id="three-dimensional-discrete-wavelet-system">
+    <title>4.2 Three-dimensional discrete wavelet system</title>
+    <p>A three-dimensional (3D) discrete wavelet system for a 3D input
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[\boldsymbol{x}]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐱</mml:mi></mml:math></alternatives></inline-formula>
+    is given by,</p>
+    <p><disp-formula><tex-math><![CDATA[
+    \boldsymbol{q}  =\text{{DWT}}\big(\boldsymbol{x}\big):=\left[\boldsymbol{A}(\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{0213}^{T})_{0213}^{T})_{0132}^{T}\right]{}_{0132}^{T}
+    \text{\hspace{3.9cm} —Analysis}
+    ]]></tex-math></disp-formula></p>
+    <p><disp-formula><tex-math><![CDATA[
+    \boldsymbol{x}  =\text{{IDWT}}\big(\boldsymbol{q}\big):=(\boldsymbol{S}(\boldsymbol{S}(\boldsymbol{S}\left[\boldsymbol{A}(\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{0213}^{T})_{0213}^{T})_{0132}^{T}\right]{}_{0132}^{T}{}_{0132}^{T})_{0132}^{T})_{0213}^{T})_{0213}
+    \text{ \hspace{.1cm}    —Synthesis}
+    ]]></tex-math></disp-formula></p>
+    <p>where, <inline-formula><alternatives>
+    <tex-math><![CDATA[\boldsymbol{A}]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐀</mml:mi></mml:math></alternatives></inline-formula>
+    and <inline-formula><alternatives>
+    <tex-math><![CDATA[\boldsymbol{S}]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐒</mml:mi></mml:math></alternatives></inline-formula>
+    are the same analysis and synthesis matrices as defined for
+    one-dimensional wavelet system. The DWT 3D and IDWT 3D layers
+    operate on batched, multichannel tensors of shape
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[(\text{{batch, height, width, depth, channels}})]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, height, width, depth, channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>.</p>
+    <sec id="dwt-3d-layer">
+      <title>4.2.1 DWT 3D layer</title>
+      <p>A DWT 3D layer operates on input tensors of shape
+      <inline-formula><alternatives>
+      <tex-math><![CDATA[(\text{{batch, height, width, depth, channels}})]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, height, width, depth, channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
+      and produces an output of shape <inline-formula><alternatives>
+      <tex-math><![CDATA[(\text{batch}, \text{height}/2, \text{width}/2, \text{depth}/2, 8\times \text{channels})]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch</mml:mtext><mml:mo>,</mml:mo><mml:mtext mathvariant="normal">height</mml:mtext><mml:mi>/</mml:mi><mml:mn>2</mml:mn><mml:mo>,</mml:mo><mml:mtext mathvariant="normal">width</mml:mtext><mml:mi>/</mml:mi><mml:mn>2</mml:mn><mml:mo>,</mml:mo><mml:mtext mathvariant="normal">depth</mml:mtext><mml:mi>/</mml:mi><mml:mn>2</mml:mn><mml:mo>,</mml:mo><mml:mn>8</mml:mn><mml:mo>×</mml:mo><mml:mtext mathvariant="normal">channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
+      as described in Algorithm 3a.</p>
+      <p><bold>Algorithm 3a</bold></p>
+      <list list-type="order">
+        <list-item>
+          <p>Input <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{X}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐗</mml:mi></mml:math></alternatives></inline-formula>
+          of shape (batch, height, width, depth, channels).</p>
+        </list-item>
+        <list-item>
+          <p>Generate analysis matrix <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{A}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐀</mml:mi></mml:math></alternatives></inline-formula>
+          using <inline-formula><alternatives>
+          <tex-math><![CDATA[\text{{height}}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mtext mathvariant="normal">height</mml:mtext></mml:math></alternatives></inline-formula>,
+          <inline-formula><alternatives>
+          <tex-math><![CDATA[\text{{width}}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mtext mathvariant="normal">width</mml:mtext></mml:math></alternatives></inline-formula>
+          and <inline-formula><alternatives>
+          <tex-math><![CDATA[\text{{depth}}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mtext mathvariant="normal">depth</mml:mtext></mml:math></alternatives></inline-formula>of
+          input.</p>
+        </list-item>
+        <list-item>
+          <p>For each batched channel <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{x}_{c}\in\boldsymbol{X}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>𝐱</mml:mi><mml:mi>c</mml:mi></mml:msub><mml:mo>∈</mml:mo><mml:mi>𝐗</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>
+          of shape <inline-formula><alternatives>
+          <tex-math><![CDATA[(\text{{batch, height, width, depth}})]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, height, width, depth</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>:
+          (omitting suffix <inline-formula><alternatives>
+          <tex-math><![CDATA[c]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>c</mml:mi></mml:math></alternatives></inline-formula>
+          in <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{x}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐱</mml:mi></mml:math></alternatives></inline-formula>
+          below for simplicity of notation)</p>
+          <list list-type="order">
+            <list-item>
+              <p>Row-wise batch DWT: <inline-formula><alternatives>
+              <tex-math><![CDATA[\boldsymbol{A}\boldsymbol{x}_{0213}^{T}:=\text{{Einsum}}\big(ij,bjkl\rightarrow bikl\big)]]></tex-math>
+              <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐀</mml:mi><mml:msubsup><mml:mi>𝐱</mml:mi><mml:mn>0213</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo>:=</mml:mo><mml:mtext mathvariant="normal">Einsum</mml:mtext><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:mi>i</mml:mi><mml:mi>j</mml:mi><mml:mo>,</mml:mo><mml:mi>b</mml:mi><mml:mi>j</mml:mi><mml:mi>k</mml:mi><mml:mi>l</mml:mi><mml:mo>→</mml:mo><mml:mi>b</mml:mi><mml:mi>i</mml:mi><mml:mi>k</mml:mi><mml:mi>l</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula></p>
+            </list-item>
+            <list-item>
+              <p>Column-wise batch DWT: <inline-formula><alternatives>
+              <tex-math><![CDATA[\boldsymbol{A}\left(\boldsymbol{A}\boldsymbol{x}_{0213}^{T}\right)_{0213}^{T}:=\text{{Einsum}}\big(ij,bjkl\rightarrow bikl\big)]]></tex-math>
+              <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐀</mml:mi><mml:msubsup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐀</mml:mi><mml:msubsup><mml:mi>𝐱</mml:mi><mml:mn>0213</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mn>0213</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo>:=</mml:mo><mml:mtext mathvariant="normal">Einsum</mml:mtext><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:mi>i</mml:mi><mml:mi>j</mml:mi><mml:mo>,</mml:mo><mml:mi>b</mml:mi><mml:mi>j</mml:mi><mml:mi>k</mml:mi><mml:mi>l</mml:mi><mml:mo>→</mml:mo><mml:mi>b</mml:mi><mml:mi>i</mml:mi><mml:mi>k</mml:mi><mml:mi>l</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula></p>
+            </list-item>
+            <list-item>
+              <p>Depth-wise batch IDWT: <inline-formula><alternatives>
+              <tex-math><![CDATA[\boldsymbol{A}(\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{0213}^{T})_{0213}^{T})_{0132}^{T}:=\text{{Einsum}}\big(ik,bjkl\rightarrow bjil\big)]]></tex-math>
+              <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐀</mml:mi><mml:msubsup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐀</mml:mi><mml:msubsup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐀</mml:mi><mml:msubsup><mml:mi>𝐱</mml:mi><mml:mn>0213</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mn>0213</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mn>0132</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo>:=</mml:mo><mml:mtext mathvariant="normal">Einsum</mml:mtext><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:mi>i</mml:mi><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mi>b</mml:mi><mml:mi>j</mml:mi><mml:mi>k</mml:mi><mml:mi>l</mml:mi><mml:mo>→</mml:mo><mml:mi>b</mml:mi><mml:mi>j</mml:mi><mml:mi>i</mml:mi><mml:mi>l</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula></p>
+              <p>Therefore, DWT of <inline-formula><alternatives>
+              <tex-math><![CDATA[\boldsymbol{x}]]></tex-math>
+              <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐱</mml:mi></mml:math></alternatives></inline-formula>
+              yield coefficients: <disp-formula><alternatives>
+              <tex-math><![CDATA[\boldsymbol{q}_{c}:=\text{{DWT}}\left(\boldsymbol{x}\right)=\left[\boldsymbol{A}(\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{0213}^{T})_{0213}^{T})_{0132}^{T}\right]{}_{0132}^{T}]]></tex-math>
+              <mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>𝐪</mml:mi><mml:mi>c</mml:mi></mml:msub><mml:mo>:=</mml:mo><mml:mtext mathvariant="normal">DWT</mml:mtext><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐱</mml:mi><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mo>=</mml:mo><mml:mrow><mml:mo stretchy="true" form="prefix">[</mml:mo><mml:mi>𝐀</mml:mi><mml:msubsup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐀</mml:mi><mml:msubsup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐀</mml:mi><mml:msubsup><mml:mi>𝐱</mml:mi><mml:mn>0213</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mn>0213</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mn>0132</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo stretchy="true" form="postfix">]</mml:mo></mml:mrow><mml:msubsup><mml:mrow></mml:mrow><mml:mn>0132</mml:mn><mml:mi>T</mml:mi></mml:msubsup></mml:mrow></mml:math></alternatives></disp-formula></p>
+            </list-item>
+          </list>
+        </list-item>
+        <list-item>
+          <p>Stacking for all <inline-formula><alternatives>
+          <tex-math><![CDATA[c]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>c</mml:mi></mml:math></alternatives></inline-formula>
+          channels as <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{Q}:=\big(\boldsymbol{q}_{c}\big)_{\forall c}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐐</mml:mi><mml:mo>:=</mml:mo><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:msub><mml:mi>𝐪</mml:mi><mml:mi>c</mml:mi></mml:msub><mml:msub><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo><mml:mrow><mml:mo>∀</mml:mo><mml:mi>c</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:math></alternatives></inline-formula>
+          to a shape (batch, height, width, depth, channels).</p>
+        </list-item>
+        <list-item>
+          <p>Group subbands and return an output
+          <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{Q}^{(\text{{grouped}})}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:msup><mml:mi>𝐐</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">grouped</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:msup></mml:math></alternatives></inline-formula>
+          of shape (batch, height<inline-formula><alternatives>
+          <tex-math><![CDATA[/2]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>/</mml:mi><mml:mn>2</mml:mn></mml:mrow></mml:math></alternatives></inline-formula>,
+          width<inline-formula><alternatives>
+          <tex-math><![CDATA[/2]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>/</mml:mi><mml:mn>2</mml:mn></mml:mrow></mml:math></alternatives></inline-formula>,
+          depth<inline-formula><alternatives>
+          <tex-math><![CDATA[/2]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>/</mml:mi><mml:mn>2</mml:mn></mml:mrow></mml:math></alternatives></inline-formula>,
+          <inline-formula><alternatives>
+          <tex-math><![CDATA[8\times]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mn>8</mml:mn><mml:mo>×</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>channels).</p>
+          <p specific-use="wrapper">
+            <code language="python">    # Grouping Eight subbands in 3D DWT
+    LLL = LLLLLHLHLLHHHLLHLHHHLHHH[:,:mid,:mid,:mid,:]
+    LLH = LLLLLHLHLLHHHLLHLHHHLHHH[:,mid:,:mid,:mid,:]
+    LHL = LLLLLHLHLLHHHLLHLHHHLHHH[:,:mid,mid:,:mid,:]
+    LHH = LLLLLHLHLLHHHLLHLHHHLHHH[:,mid:,mid:,:mid,:]
+    HLL = LLLLLHLHLLHHHLLHLHHHLHHH[:,:mid,:mid,mid:,:]
+    HLH = LLLLLHLHLLHHHLLHLHHHLHHH[:,mid:,mid:,mid:,:]
+    HHL = LLLLLHLHLLHHHLLHLHHHLHHH[:,:mid,mid:,mid:,:]
+    HHH = LLLLLHLHLLHHHLLHLHHHLHHH[:,_mid:,mid:,mid:,:]
+
+    output = Concatenate([LLL, LLH, LHL, LHH, HLL, HLH, HHL, HHH], axis=-1)</code>
+          </p>
+        </list-item>
+      </list>
+    </sec>
+    <sec id="idwt-3d-layer">
+      <title>4.2.2 IDWT 3D layer</title>
+      <p>An IDWT 3D layer operates on input tensors of shape
+      <inline-formula><alternatives>
+      <tex-math><![CDATA[(\text{batch}, \text{height}/2, \text{width}/2, \text{depth}/2, 8\times \text{channels})]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch</mml:mtext><mml:mo>,</mml:mo><mml:mtext mathvariant="normal">height</mml:mtext><mml:mi>/</mml:mi><mml:mn>2</mml:mn><mml:mo>,</mml:mo><mml:mtext mathvariant="normal">width</mml:mtext><mml:mi>/</mml:mi><mml:mn>2</mml:mn><mml:mo>,</mml:mo><mml:mtext mathvariant="normal">depth</mml:mtext><mml:mi>/</mml:mi><mml:mn>2</mml:mn><mml:mo>,</mml:mo><mml:mn>8</mml:mn><mml:mo>×</mml:mo><mml:mtext mathvariant="normal">channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
+      and produces an output of shape <inline-formula><alternatives>
+      <tex-math><![CDATA[(\text{{batch, height, width, depth, channels}})]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, height, width, depth, channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
+      as described in Algorithm 3b.</p>
+      <p><bold>Algorithm 3b</bold></p>
+      <list list-type="order">
+        <list-item>
+          <p>Input <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{Q}^{(\text{{grouped}})}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:msup><mml:mi>𝐐</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">grouped</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:msup></mml:math></alternatives></inline-formula>
+          of shape <inline-formula><alternatives>
+          <tex-math><![CDATA[(\text{batch}, \text{height}/2, \text{width}/2, \text{depth}/2, 8\times\text{channels})]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch</mml:mtext><mml:mo>,</mml:mo><mml:mtext mathvariant="normal">height</mml:mtext><mml:mi>/</mml:mi><mml:mn>2</mml:mn><mml:mo>,</mml:mo><mml:mtext mathvariant="normal">width</mml:mtext><mml:mi>/</mml:mi><mml:mn>2</mml:mn><mml:mo>,</mml:mo><mml:mtext mathvariant="normal">depth</mml:mtext><mml:mi>/</mml:mi><mml:mn>2</mml:mn><mml:mo>,</mml:mo><mml:mn>8</mml:mn><mml:mo>×</mml:mo><mml:mtext mathvariant="normal">channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula></p>
+        </list-item>
+        <list-item>
+          <p>Ungroup to get <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{Q}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐐</mml:mi></mml:math></alternatives></inline-formula>
+          of shape <inline-formula><alternatives>
+          <tex-math><![CDATA[(\text{{batch, height, width, depth, channels}})]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, height, width, depth, channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula></p>
+        </list-item>
+        <list-item>
+          <p>Generate synthesis matrix <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{S}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐒</mml:mi></mml:math></alternatives></inline-formula>
+          using <inline-formula><alternatives>
+          <tex-math><![CDATA[\text{{height}}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mtext mathvariant="normal">height</mml:mtext></mml:math></alternatives></inline-formula>,
+          <inline-formula><alternatives>
+          <tex-math><![CDATA[\text{{width}}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mtext mathvariant="normal">width</mml:mtext></mml:math></alternatives></inline-formula>
+          and <inline-formula><alternatives>
+          <tex-math><![CDATA[\text{{depth}}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mtext mathvariant="normal">depth</mml:mtext></mml:math></alternatives></inline-formula>
+          of <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{Q}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐐</mml:mi></mml:math></alternatives></inline-formula>.</p>
+        </list-item>
+        <list-item>
+          <p>For each batched channel <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{q}_{c}\in\boldsymbol{Q}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>𝐪</mml:mi><mml:mi>c</mml:mi></mml:msub><mml:mo>∈</mml:mo><mml:mi>𝐐</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>
+          of shape <inline-formula><alternatives>
+          <tex-math><![CDATA[(\text{{batch, height, width, depth}})]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, height, width, depth</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>:
+          (omitting suffix <inline-formula><alternatives>
+          <tex-math><![CDATA[c]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>c</mml:mi></mml:math></alternatives></inline-formula>
+          in <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{q}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐪</mml:mi></mml:math></alternatives></inline-formula>
+          below for simplicity of notation)</p>
+          <list list-type="order">
+            <list-item>
+              <p>Row-wise batch IDWT: <inline-formula><alternatives>
+              <tex-math><![CDATA[\boldsymbol{S}\boldsymbol{q}_{0132}^{T}:=\text{{Einsum}}\big(ik,bjkl\rightarrow bjil\big)]]></tex-math>
+              <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐒</mml:mi><mml:msubsup><mml:mi>𝐪</mml:mi><mml:mn>0132</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo>:=</mml:mo><mml:mtext mathvariant="normal">Einsum</mml:mtext><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:mi>i</mml:mi><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mi>b</mml:mi><mml:mi>j</mml:mi><mml:mi>k</mml:mi><mml:mi>l</mml:mi><mml:mo>→</mml:mo><mml:mi>b</mml:mi><mml:mi>j</mml:mi><mml:mi>i</mml:mi><mml:mi>l</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula></p>
+            </list-item>
+            <list-item>
+              <p>Column-wise batch IDWT: <inline-formula><alternatives>
+              <tex-math><![CDATA[\boldsymbol{S} (\boldsymbol{S}\boldsymbol{q}_{0132}^{T})_{0132}:=\text{{Einsum}}\big(ij,bjkl\rightarrow bikl\big)]]></tex-math>
+              <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐒</mml:mi><mml:msub><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐒</mml:mi><mml:msubsup><mml:mi>𝐪</mml:mi><mml:mn>0132</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mn>0132</mml:mn></mml:msub><mml:mo>:=</mml:mo><mml:mtext mathvariant="normal">Einsum</mml:mtext><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:mi>i</mml:mi><mml:mi>j</mml:mi><mml:mo>,</mml:mo><mml:mi>b</mml:mi><mml:mi>j</mml:mi><mml:mi>k</mml:mi><mml:mi>l</mml:mi><mml:mo>→</mml:mo><mml:mi>b</mml:mi><mml:mi>i</mml:mi><mml:mi>k</mml:mi><mml:mi>l</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula></p>
+            </list-item>
+            <list-item>
+              <p>Depth-wise batch IDWT: <inline-formula><alternatives>
+              <tex-math><![CDATA[\boldsymbol{S}(\boldsymbol{S}(\boldsymbol{S}\boldsymbol{q}_{0132}^{T})_{0132}^{T})_{0213}^{T}:=\text{{Einsum}}\big(ij,bjkl\rightarrow bikl\big)]]></tex-math>
+              <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐒</mml:mi><mml:msubsup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐒</mml:mi><mml:msubsup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐒</mml:mi><mml:msubsup><mml:mi>𝐪</mml:mi><mml:mn>0132</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mn>0132</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mn>0213</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo>:=</mml:mo><mml:mtext mathvariant="normal">Einsum</mml:mtext><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:mi>i</mml:mi><mml:mi>j</mml:mi><mml:mo>,</mml:mo><mml:mi>b</mml:mi><mml:mi>j</mml:mi><mml:mi>k</mml:mi><mml:mi>l</mml:mi><mml:mo>→</mml:mo><mml:mi>b</mml:mi><mml:mi>i</mml:mi><mml:mi>k</mml:mi><mml:mi>l</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula></p>
+              <p>or equivalently, a perfect reconstruction,</p>
+              <p><disp-formula><alternatives>
+              <tex-math><![CDATA[\boldsymbol{x}_{c}:=\text{{IDWT}}\left(\boldsymbol{q}\right)=\left[\boldsymbol{S}(\boldsymbol{S}(\boldsymbol{S}\boldsymbol{q}_{0132}^{T})_{0132}^{T})_{0213}^{T}\right]_{0213}^{T}]]></tex-math>
+              <mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>𝐱</mml:mi><mml:mi>c</mml:mi></mml:msub><mml:mo>:=</mml:mo><mml:mtext mathvariant="normal">IDWT</mml:mtext><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐪</mml:mi><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mo>=</mml:mo><mml:msubsup><mml:mrow><mml:mo stretchy="true" form="prefix">[</mml:mo><mml:mi>𝐒</mml:mi><mml:msubsup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐒</mml:mi><mml:msubsup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐒</mml:mi><mml:msubsup><mml:mi>𝐪</mml:mi><mml:mn>0132</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mn>0132</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mn>0213</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo stretchy="true" form="postfix">]</mml:mo></mml:mrow><mml:mn>0213</mml:mn><mml:mi>T</mml:mi></mml:msubsup></mml:mrow></mml:math></alternatives></disp-formula></p>
+              <p>where, <inline-formula><alternatives>
+              <tex-math><![CDATA[\boldsymbol{S}=\boldsymbol{A}^{T}]]></tex-math>
+              <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐒</mml:mi><mml:mo>=</mml:mo><mml:msup><mml:mi>𝐀</mml:mi><mml:mi>T</mml:mi></mml:msup></mml:mrow></mml:math></alternatives></inline-formula>
+              for orthogonal wavelets.</p>
+            </list-item>
+          </list>
+        </list-item>
+        <list-item>
+          <p>Layer output (perfect reconstruction):
+          <inline-formula><alternatives>
+          <tex-math><![CDATA[\boldsymbol{X}:=\big(\boldsymbol{x}_{c}\big)_{\forall c}]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐗</mml:mi><mml:mo>:=</mml:mo><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:msub><mml:mi>𝐱</mml:mi><mml:mi>c</mml:mi></mml:msub><mml:msub><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo><mml:mrow><mml:mo>∀</mml:mo><mml:mi>c</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:math></alternatives></inline-formula>
+          is of shape <inline-formula><alternatives>
+          <tex-math><![CDATA[(\text{{batch, height, width, depth, channels}})]]></tex-math>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, height, width, depth, channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula></p>
+        </list-item>
+      </list>
+      <p>In general, a seamless realization of fast
+      <inline-formula><alternatives>
+      <tex-math><![CDATA[\text{D}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mtext mathvariant="normal">D</mml:mtext></mml:math></alternatives></inline-formula>-dimensional
+      DWT and IDWT is possible by extending the above separable method
+      to all the independent <inline-formula><alternatives>
+      <tex-math><![CDATA[N]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>N</mml:mi></mml:math></alternatives></inline-formula>
+      axes one after the other. The number of subbands will be equal to
+      <inline-formula><alternatives>
+      <tex-math><![CDATA[2^{\text{{D}}}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:msup><mml:mn>2</mml:mn><mml:mtext mathvariant="normal">D</mml:mtext></mml:msup></mml:math></alternatives></inline-formula>
+      for a <inline-formula><alternatives>
+      <tex-math><![CDATA[\text{{D}}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mtext mathvariant="normal">D</mml:mtext></mml:math></alternatives></inline-formula>
+      dimensional DWT. For example, sequences
+      <inline-formula><alternatives>
+      <tex-math><![CDATA[(\text{{D}}=1)]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">D</mml:mtext><mml:mo>=</mml:mo><mml:mn>1</mml:mn><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
+      yield two subbands, images <inline-formula><alternatives>
+      <tex-math><![CDATA[(\text{{D}}=2)]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">D</mml:mtext><mml:mo>=</mml:mo><mml:mn>2</mml:mn><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
+      yield four subbands, three-dimensional inputs
+      <inline-formula><alternatives>
+      <tex-math><![CDATA[(\text{{D}}=3)]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">D</mml:mtext><mml:mo>=</mml:mo><mml:mn>3</mml:mn><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
+      with voxels yield eight subbands etc.</p>
+    </sec>
+  </sec>
+</sec>
+<sec id="multilevel-wavelet-filter-banks">
+  <title>5 Multilevel wavelet filter banks</title>
+  <p>The above-discussed DWT and IDWT layers are building blocks in
+  constructing multilevel DWT filter banks.
+  <xref alt="[fig:MultilevelDWTtiling]" rid="figU003AMultilevelDWTtiling">[fig:MultilevelDWTtiling]</xref>
+  shows the partitioning of the 1D frequency axis and tiling of the 2D
+  frequency plane using a level-4 1D and 2D DWT. The multilevel DWT
+  successively decomposes the low-frequency feature. If the
+  high-frequency features are also decomposed successively, then we get
+  a Wavelet Packet Transform (WPT) filter bank.</p>
+  <fig>
+    <caption><p>Spatial-frequency tiling by DWT level 4 decomposition of
+    a sequence of length N (top) and image of shape Nimes N
+    (bottom).<styled-content id="figU003AMultilevelDWTtiling"></styled-content></p></caption>
+    <graphic mimetype="image" mime-subtype="jpeg" xlink:href="SpatialFrequencyTilingLv4.jpg" />
+  </fig>
+</sec>
+</body>
+<back>
+<ref-list>
+  <title></title>
+  <ref id="ref-lee2019pywavelets">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Lee</surname><given-names>Gregory</given-names></name>
+        <name><surname>Gommers</surname><given-names>Ralf</given-names></name>
+        <name><surname>Waselewski</surname><given-names>Filip</given-names></name>
+        <name><surname>Wohlfahrt</surname><given-names>Kai</given-names></name>
+        <name><surname>O’Leary</surname><given-names>Aaron</given-names></name>
+      </person-group>
+      <article-title>PyWavelets: A python package for wavelet analysis</article-title>
+      <source>Journal of Open Source Software</source>
+      <publisher-name>The Open Journal</publisher-name>
+      <year iso-8601-date="2019">2019</year>
+      <volume>4</volume>
+      <issue>36</issue>
+      <fpage>1237</fpage>
+      <lpage></lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-developers2022tensorflow">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Developers</surname><given-names>TensorFlow</given-names></name>
+      </person-group>
+      <article-title>TensorFlow</article-title>
+      <source>Zenodo</source>
+      <year iso-8601-date="2022">2022</year>
+    </element-citation>
+  </ref>
+  <ref id="ref-versaci2021wavetf">
+    <element-citation publication-type="paper-conference">
+      <person-group person-group-type="author">
+        <name><surname>Versaci</surname><given-names>Francesco</given-names></name>
+      </person-group>
+      <article-title>WaveTF: A fast 2D wavelet transform for machine learning in keras</article-title>
+      <source>Pattern recognition. ICPR international workshops and challenges: Virtual event, january 10–15, 2021, proceedings, part i</source>
+      <publisher-name>Springer</publisher-name>
+      <year iso-8601-date="2021">2021</year>
+      <fpage>605</fpage>
+      <lpage>618</lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-tensorflow-wavelets-1.1.2">
+    <element-citation publication-type="paper-conference">
+      <person-group person-group-type="author">
+        <name><surname>Leiderman</surname><given-names>Timor</given-names></name>
+      </person-group>
+      <article-title>Tensorflow-wavelets: Tensorflow wavelet layers</article-title>
+      <publisher-name>Python Software Foundation</publisher-name>
+      <year iso-8601-date="2025">2025</year>
+      <uri>https://pypi.org/project/tensorflow-wavelets/</uri>
+    </element-citation>
+  </ref>
+  <ref id="ref-imambi2021pytorch">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Imambi</surname><given-names>Sagar</given-names></name>
+        <name><surname>Prakash</surname><given-names>Kolla Bhanu</given-names></name>
+        <name><surname>Kanagachidambaresan</surname><given-names>GR</given-names></name>
+      </person-group>
+      <article-title>PyTorch</article-title>
+      <source>Programming with TensorFlow: solution for edge computing applications</source>
+      <publisher-name>Springer</publisher-name>
+      <year iso-8601-date="2021">2021</year>
+      <fpage>87</fpage>
+      <lpage>104</lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-pytorch-wavelets-1.3.0">
+    <element-citation publication-type="paper-conference">
+      <person-group person-group-type="author">
+        <name><surname>Cotter</surname><given-names>Fergal</given-names></name>
+      </person-group>
+      <article-title>Pytorch-wavelets: A port of the DTCWT toolbox to run on pytorch</article-title>
+      <year iso-8601-date="2023">2023</year>
+      <uri>https://pypi.org/project/pytorch-wavelets/</uri>
+    </element-citation>
+  </ref>
+  <ref id="ref-harris2020array">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Harris</surname><given-names>Charles R.</given-names></name>
+        <name><surname>Millman</surname><given-names>K. Jarrod</given-names></name>
+        <name><surname>Walt</surname><given-names>Stéfan J. van der</given-names></name>
+        <name><surname>Gommers</surname><given-names>Ralf</given-names></name>
+        <name><surname>Virtanen</surname><given-names>Pauli</given-names></name>
+        <name><surname>Cournapeau</surname><given-names>David</given-names></name>
+        <name><surname>Wieser</surname><given-names>Eric</given-names></name>
+        <name><surname>Taylor</surname><given-names>Julian</given-names></name>
+        <name><surname>Berg</surname><given-names>Sebastian</given-names></name>
+        <name><surname>Smith</surname><given-names>Nathaniel J.</given-names></name>
+        <name><surname>Kern</surname><given-names>Robert</given-names></name>
+        <name><surname>Picus</surname><given-names>Matti</given-names></name>
+        <name><surname>Hoyer</surname><given-names>Stephan</given-names></name>
+        <name><surname>Kerkwijk</surname><given-names>Marten H. van</given-names></name>
+        <name><surname>Brett</surname><given-names>Matthew</given-names></name>
+        <name><surname>Haldane</surname><given-names>Allan</given-names></name>
+        <name><surname>Río</surname><given-names>Jaime Fernández del</given-names></name>
+        <name><surname>Wiebe</surname><given-names>Mark</given-names></name>
+        <name><surname>Peterson</surname><given-names>Pearu</given-names></name>
+        <name><surname>Gérard-Marchant</surname><given-names>Pierre</given-names></name>
+        <name><surname>Sheppard</surname><given-names>Kevin</given-names></name>
+        <name><surname>Reddy</surname><given-names>Tyler</given-names></name>
+        <name><surname>Weckesser</surname><given-names>Warren</given-names></name>
+        <name><surname>Abbasi</surname><given-names>Hameer</given-names></name>
+        <name><surname>Gohlke</surname><given-names>Christoph</given-names></name>
+        <name><surname>Oliphant</surname><given-names>Travis E.</given-names></name>
+      </person-group>
+      <article-title>Array programming with NumPy</article-title>
+      <source>Nature</source>
+      <publisher-name>Springer Science; Business Media LLC</publisher-name>
+      <year iso-8601-date="2020-09">2020</year><month>09</month>
+      <volume>585</volume>
+      <issue>7825</issue>
+      <uri>https://doi.org/10.1038/s41586-020-2649-2</uri>
+      <pub-id pub-id-type="doi">10.1038/s41586-020-2649-2</pub-id>
+      <fpage>357</fpage>
+      <lpage>362</lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-misiti1996wavelet">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Misiti</surname><given-names>Michel</given-names></name>
+        <name><surname>Misiti</surname><given-names>Yves</given-names></name>
+        <name><surname>Oppenheim</surname><given-names>Georges</given-names></name>
+        <name><surname>Poggi</surname><given-names>Jean-Michel</given-names></name>
+      </person-group>
+      <article-title>Wavelet toolbox</article-title>
+      <source>The MathWorks Inc., Natick, MA</source>
+      <year iso-8601-date="1996">1996</year>
+      <volume>15</volume>
+      <fpage>21</fpage>
+      <lpage></lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-fatica2008cuda">
+    <element-citation publication-type="paper-conference">
+      <person-group person-group-type="author">
+        <name><surname>Fatica</surname><given-names>Massimiliano</given-names></name>
+      </person-group>
+      <article-title>CUDA toolkit and libraries</article-title>
+      <source>2008 IEEE hot chips 20 symposium (HCS)</source>
+      <publisher-name>IEEE</publisher-name>
+      <year iso-8601-date="2008">2008</year>
+      <fpage>1</fpage>
+      <lpage>22</lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-tarafdar2025multiresolution">
+    <element-citation publication-type="paper-conference">
+      <person-group person-group-type="author">
+        <name><surname>Tarafdar</surname><given-names>Kishore K</given-names></name>
+        <name><surname>Meher</surname><given-names>Aaditya</given-names></name>
+        <name><surname>Shah</surname><given-names>Mirat</given-names></name>
+        <name><surname>Saifee</surname><given-names>Qutubuddin</given-names></name>
+        <name><surname>Kumar</surname><given-names>Dushyant</given-names></name>
+        <name><surname>Nimkar</surname><given-names>Anant V</given-names></name>
+        <name><surname>Jayasundar</surname><given-names>Rama</given-names></name>
+        <name><surname>Gadre</surname><given-names>Vikram M</given-names></name>
+      </person-group>
+      <article-title>Multiresolution encoder-decoder convolutional neural network for magnetic resonance image segmentation</article-title>
+      <source>ICASSP 2025-2025 IEEE international conference on acoustics, speech and signal processing (ICASSP)</source>
+      <publisher-name>IEEE</publisher-name>
+      <year iso-8601-date="2025">2025</year>
+      <fpage>1</fpage>
+      <lpage>5</lpage>
+    </element-citation>
+  </ref>
+</ref-list>
+</back>
+</article>

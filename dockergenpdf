@@ -1,0 +1,1 @@
+sudo docker run --rm     --volume /home/kkt/src/TFDWT.pypi:/data     --user 1005:1005     --env JOURNAL=joss     openjournals/inara
