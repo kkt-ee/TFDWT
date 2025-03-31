@@ -8,6 +8,7 @@ tags:
   - Multirate systems
   - Deep Learning
   - CUDA
+  - Signal processing
 authors:
   - name: Kishore K. Tarafdar
     orcid: 0009-0001-4548-7639
@@ -23,7 +24,7 @@ bibliography: paper.bib
 
 # 1 Summary
 
-TFDWT is an open-source Python package that allows the creation of TensorFlow Layers for Fast Discrete Wavelet Transform (DWT) and Inverse Discrete Wavelet Transform (IDWT) in end-to-end backpropagation learning networks. These layers facilitate the construction of multilevel DWT filterbanks and Wavelet Packet Transform (WPT) filterbanks for a spatial-frequency representation of the inputs and features in shallow or deep networks. A multiresolution signal representation using a multi-rate discrete wavelet system creates enriched joint natural-frequency representations. The discrete wavelet system partitions the frequency plane into subbands using orthogonal dilated and translated lowpass scaling and highpass wavelet function. A realization of a fast discrete wavelet system is a two-band perfect reconstruction multi-rate filter bank with FIR filters corresponding to the impulse responses of the scaling and wavelet function with downsampling and upsampling operations. A filter bank for a higher dimensional input is a seamless extension by successive separable circular convolutions across each independent axis.
+TFDWT is an open-source Python package that allows the creation of TensorFlow Layers for Fast Discrete Wavelet Transform (DWT) and Inverse Discrete Wavelet Transform (IDWT) in end-to-end backpropagation learning networks. These layers facilitate the construction of multilevel DWT filterbanks and Wavelet Packet Transform (WPT) filterbanks for a spatial-frequency representation of the inputs and features in shallow or deep networks. A multiresolution signal representation using a multi-rate discrete wavelet system creates enriched joint natural-frequency representations. The discrete wavelet system partitions the frequency plane into subbands using orthogonal dilated and translated lowpass scaling and highpass wavelet function. A realization of a fast discrete wavelet system is a two-band perfect reconstruction multi-rate filter bank with FIR filters corresponding to the impulse responses of the scaling and wavelet function with downsampling and upsampling operations. A filter bank for a higher dimensional input is a seamless extension by successive separable circular convolutions across each independent axis. To install the latest version of the package, use `pip install TFDWT`.
 
 # 2 Statement of need
 
@@ -191,7 +192,7 @@ $$
 \boldsymbol{x}	=\text{{IDWT}}\big(\boldsymbol{q}\big):=\boldsymbol{S}(\boldsymbol{S}\left[\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{021}^{T})_{021}^{T}\right]_{021}^{T})_{021}^{T}\text{\hspace{0.2cm}—Synthesis} 
 $$
 
-where, $\boldsymbol{A}$ and $\boldsymbol{S}$ are the same analysis and synthesis matrices defined for one-dimensional wavelet system. \autoref{fig:subdband2d} shows an $N\times N$ image and its four localized spatial-frequency subbands after DWT. Here, the low-frequency band is LL, and the other three are high-frequency subbands representing horizontal, vertical and diagonal features. \autoref{fig:2BPRFB-2} illustrates a separable 2D DWT perfect reconstruction filter bank. The 2D layers operate on batched, multichannel tensors of shape $(\text{{batch, height, width, channels}})$, where each image is of shape height and width. \autoref{fig:2DDWTlayer} illustrates input, output and perfect reconstruction by DWT 2D and IDWT 2D layers. The Multiresolution Encoder-Decoder Convolutional Neural Network in [@tarafdar2025multiresolution] uses these layers.
+where, $\boldsymbol{A}$ and $\boldsymbol{S}$ are the same analysis and synthesis matrices defined for one-dimensional wavelet system. \autoref{fig:subdband2d} shows an $N\times N$ image and its four localized spatial-frequency subbands after DWT. Here, the low-frequency band is LL, and the other three are high-frequency subbands representing horizontal, vertical and diagonal features. \autoref{fig:2BPRFB-2} illustrates a separable 2D DWT perfect reconstruction filter bank. The 2D layers operate on batched, multichannel tensors of shape $(\text{{batch, height, width, channels}})$, where each image is of shape height and width. \autoref{fig:2DDWTlayer} illustrates input, output and perfect reconstruction by DWT 2D and IDWT 2D layers. The Multiresolution Encoder-Decoder Convolutional Neural Network in [@tarafdar2025multiresolution] uses these forward and inverse transform layers.
 
 ![Natural domain (left) and spatial-frequency tiling (right) after a DWT 2D.\label{fig:subdband2d}](figs/SpatialFrequencyTilingLv1.jpg){ width=70% }
 
@@ -210,7 +211,8 @@ A DWT 2D layer operates on input tensors of shape $(\text{{batch, height, width,
     1.  Row-wise batch DWT 1D: $\boldsymbol{A}\boldsymbol{x}_{021}^{T}:=\text{Einsum} \big(ij,bjk \rightarrow bik \big)$
     2.  Column-wise batch DWT 1D: $\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{021}^{T})_{021}^{T} :=\text{Einsum} \big(ij,bjk\rightarrow bik\big)$
         Or, equivalently, DWT of a batched channel $\boldsymbol{x}$ is,
-        $$\boldsymbol{q}_{c}=\text{{DWT}}\big(\boldsymbol{x}\big)\text{{ or, }}\boldsymbol{q}_{c}=\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{021})_{021}^{T}$$
+        $$\boldsymbol{q}_{c}=\text{{DWT}}\big(\boldsymbol{x}\big)\text{{ or, }}\boldsymbol{q}_{c}=\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{021})_{021}^{T}$$ 
+		where, the suffix $021$ in $\boldsymbol{x}_{021}^{T}$ denotes permutation of axis, i.e., transpose.
 4.  Stacking for all $c$ channels: $\boldsymbol{Q}:=\big(\boldsymbol{q}_{c}\big)_{\forall c}$ to a shape $(\text{{batch, height, width, channels}})$.
 5.  Group subbands and return an output $\boldsymbol{Q}^{(\text{{grouped}})}$ of shape $(\text{batch}, \text{height}/2, \text{width}/2, 4\times\text{channels})$
 
@@ -238,11 +240,12 @@ An IDWT 2D layer operates on input tensors of shape $(\text{batch}, \text{height
 	1.   Row-wise batch IDWT 1D: $\boldsymbol{S}\boldsymbol{q}_{021}^{T}:=\text{Einsum}\big(ij,bjk\rightarrow bik\big)$
 	2.   Column wise batch IDWT 1D: $\boldsymbol{S}(\boldsymbol{S}\boldsymbol{q}_{021}^{T})_{021}^{T}:=\text{Einsum}\big(ij,bjk\rightarrow bik\big)$
         or equivalently, a perfect reconstruction,
-        $$\boldsymbol{x}=\text{{IDWT}}\big(\boldsymbol{q}\big)\text{{ or, }}\boldsymbol{x}=\boldsymbol{S}(\boldsymbol{S}\boldsymbol{q}_{021}^{T})_{021}^{T}$$
-        where, $\boldsymbol{S}=\boldsymbol{A}^{T}$ for orthogonal   wavelets
-5.  Layer output (perfect reconstruction): $\boldsymbol{X}:=\big(\boldsymbol{x}_{c}\big)_{\forall c}$ is of  shape $(\text{{batch, height, width, channels}})$
+        $$\boldsymbol{x}=\text{{IDWT}}\big(\boldsymbol{q}\big)\text{{ or, }}\boldsymbol{x}=\boldsymbol{S}(\boldsymbol{S}\boldsymbol{q}_{021}^{T})_{021}^{T}$$ 
+		where, the suffix $021$ in $\boldsymbol{x}_{021}^{T}$ denotes permutation of axis, i.e., transpose and $\boldsymbol{S}=\boldsymbol{A}^{T}$ for orthogonal   wavelets
+5.  Layer output : $\boldsymbol{X}:=\big(\boldsymbol{x}_{c}\big)_{\forall c}$ is of  shape $(\text{{batch, height, width, channels}})$ \
+(Perfect reconstruction)
 
-![DWT decomposition and perfect reconstruction of a tensor , where  is DWT 2D layer and  is IDWT 2D layer.\label{fig:2DDWTlayer}](figs/DWT2DIDWT2D_PRlayer.jpg){ width=50% }
+![DWT decomposition and perfect reconstruction of a multichannel image tensor.\label{fig:2DDWTlayer}](figs/DWT2DIDWT2D_PRlayer.jpg){ width=60% }
 
 ## 4.2 Three-dimensional discrete wavelet system
 
@@ -308,7 +311,8 @@ An IDWT 3D layer operates on input tensors of shape $(\text{batch}, \text{height
         or equivalently, a perfect reconstruction,        
         $$\boldsymbol{x}_{c}:=\text{{IDWT}}\left(\boldsymbol{q}\right)=\left[\boldsymbol{S}(\boldsymbol{S}(\boldsymbol{S}\boldsymbol{q}_{0132}^{T})_{0132}^{T})_{0213}^{T}\right]_{0213}^{T}$$
         where, $\boldsymbol{S}=\boldsymbol{A}^{T}$ for orthogonal wavelets.
-5.  Layer output (perfect reconstruction): $\boldsymbol{X}:=\big(\boldsymbol{x}_{c}\big)_{\forall c}$ is of  shape $(\text{{batch, height, width, depth, channels}})$
+5.  Layer output : $\boldsymbol{X}:=\big(\boldsymbol{x}_{c}\big)_{\forall c}$ is of  shape $(\text{{batch, height, width, depth, channels}})$ \
+(Perfect reconstruction)
     
 
 

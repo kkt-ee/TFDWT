@@ -73,6 +73,7 @@ a Creative Commons Attribution 4.0 International License (CC BY
 <kwd>Multirate systems</kwd>
 <kwd>Deep Learning</kwd>
 <kwd>CUDA</kwd>
+<kwd>Signal processing</kwd>
 </kwd-group>
 </article-meta>
 </front>
@@ -96,7 +97,8 @@ a Creative Commons Attribution 4.0 International License (CC BY
   wavelet function with downsampling and upsampling operations. A filter
   bank for a higher dimensional input is a seamless extension by
   successive separable circular convolutions across each independent
-  axis.</p>
+  axis. To install the latest version of the package, use
+  <monospace>pip install TFDWT</monospace>.</p>
 </sec>
 <sec id="statement-of-need">
   <title>2 Statement of need</title>
@@ -643,7 +645,8 @@ a Creative Commons Attribution 4.0 International License (CC BY
     IDWT 2D layers. The Multiresolution Encoder-Decoder Convolutional
     Neural Network in
     (<xref alt="Tarafdar et al., 2025" rid="ref-tarafdar2025multiresolution" ref-type="bibr">Tarafdar
-    et al., 2025</xref>) uses these layers.</p>
+    et al., 2025</xref>) uses these forward and inverse transform
+    layers.</p>
     <fig>
       <caption><p>Natural domain (left) and spatial-frequency tiling
       (right) after a DWT
@@ -718,7 +721,14 @@ a Creative Commons Attribution 4.0 International License (CC BY
               <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐱</mml:mi></mml:math></alternatives></inline-formula>
               is, <disp-formula><alternatives>
               <tex-math><![CDATA[\boldsymbol{q}_{c}=\text{{DWT}}\big(\boldsymbol{x}\big)\text{{ or, }}\boldsymbol{q}_{c}=\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{021})_{021}^{T}]]></tex-math>
-              <mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>𝐪</mml:mi><mml:mi>c</mml:mi></mml:msub><mml:mo>=</mml:mo><mml:mtext mathvariant="normal">DWT</mml:mtext><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:mi>𝐱</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo><mml:mrow><mml:mspace width="0.333em"></mml:mspace><mml:mtext mathvariant="normal"> or, </mml:mtext><mml:mspace width="0.333em"></mml:mspace></mml:mrow><mml:msub><mml:mi>𝐪</mml:mi><mml:mi>c</mml:mi></mml:msub><mml:mo>=</mml:mo><mml:mi>𝐀</mml:mi><mml:msubsup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐀</mml:mi><mml:msub><mml:mi>𝐱</mml:mi><mml:mn>021</mml:mn></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mn>021</mml:mn><mml:mi>T</mml:mi></mml:msubsup></mml:mrow></mml:math></alternatives></disp-formula></p>
+              <mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>𝐪</mml:mi><mml:mi>c</mml:mi></mml:msub><mml:mo>=</mml:mo><mml:mtext mathvariant="normal">DWT</mml:mtext><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:mi>𝐱</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo><mml:mrow><mml:mspace width="0.333em"></mml:mspace><mml:mtext mathvariant="normal"> or, </mml:mtext><mml:mspace width="0.333em"></mml:mspace></mml:mrow><mml:msub><mml:mi>𝐪</mml:mi><mml:mi>c</mml:mi></mml:msub><mml:mo>=</mml:mo><mml:mi>𝐀</mml:mi><mml:msubsup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐀</mml:mi><mml:msub><mml:mi>𝐱</mml:mi><mml:mn>021</mml:mn></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mn>021</mml:mn><mml:mi>T</mml:mi></mml:msubsup></mml:mrow></mml:math></alternatives></disp-formula>
+              where, the suffix <inline-formula><alternatives>
+              <tex-math><![CDATA[021]]></tex-math>
+              <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mn>021</mml:mn></mml:math></alternatives></inline-formula>
+              in <inline-formula><alternatives>
+              <tex-math><![CDATA[\boldsymbol{x}_{021}^{T}]]></tex-math>
+              <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:msubsup><mml:mi>𝐱</mml:mi><mml:mn>021</mml:mn><mml:mi>T</mml:mi></mml:msubsup></mml:math></alternatives></inline-formula>
+              denotes permutation of axis, i.e., transpose.</p>
             </list-item>
           </list>
         </list-item>
@@ -824,7 +834,14 @@ a Creative Commons Attribution 4.0 International License (CC BY
               <disp-formula><alternatives>
               <tex-math><![CDATA[\boldsymbol{x}=\text{{IDWT}}\big(\boldsymbol{q}\big)\text{{ or, }}\boldsymbol{x}=\boldsymbol{S}(\boldsymbol{S}\boldsymbol{q}_{021}^{T})_{021}^{T}]]></tex-math>
               <mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐱</mml:mi><mml:mo>=</mml:mo><mml:mtext mathvariant="normal">IDWT</mml:mtext><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:mi>𝐪</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo><mml:mrow><mml:mspace width="0.333em"></mml:mspace><mml:mtext mathvariant="normal"> or, </mml:mtext><mml:mspace width="0.333em"></mml:mspace></mml:mrow><mml:mi>𝐱</mml:mi><mml:mo>=</mml:mo><mml:mi>𝐒</mml:mi><mml:msubsup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐒</mml:mi><mml:msubsup><mml:mi>𝐪</mml:mi><mml:mn>021</mml:mn><mml:mi>T</mml:mi></mml:msubsup><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mn>021</mml:mn><mml:mi>T</mml:mi></mml:msubsup></mml:mrow></mml:math></alternatives></disp-formula>
-              where, <inline-formula><alternatives>
+              where, the suffix <inline-formula><alternatives>
+              <tex-math><![CDATA[021]]></tex-math>
+              <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mn>021</mml:mn></mml:math></alternatives></inline-formula>
+              in <inline-formula><alternatives>
+              <tex-math><![CDATA[\boldsymbol{x}_{021}^{T}]]></tex-math>
+              <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:msubsup><mml:mi>𝐱</mml:mi><mml:mn>021</mml:mn><mml:mi>T</mml:mi></mml:msubsup></mml:math></alternatives></inline-formula>
+              denotes permutation of axis, i.e., transpose and
+              <inline-formula><alternatives>
               <tex-math><![CDATA[\boldsymbol{S}=\boldsymbol{A}^{T}]]></tex-math>
               <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐒</mml:mi><mml:mo>=</mml:mo><mml:msup><mml:mi>𝐀</mml:mi><mml:mi>T</mml:mi></mml:msup></mml:mrow></mml:math></alternatives></inline-formula>
               for orthogonal wavelets</p>
@@ -832,19 +849,19 @@ a Creative Commons Attribution 4.0 International License (CC BY
           </list>
         </list-item>
         <list-item>
-          <p>Layer output (perfect reconstruction):
-          <inline-formula><alternatives>
+          <p>Layer output : <inline-formula><alternatives>
           <tex-math><![CDATA[\boldsymbol{X}:=\big(\boldsymbol{x}_{c}\big)_{\forall c}]]></tex-math>
           <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐗</mml:mi><mml:mo>:=</mml:mo><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:msub><mml:mi>𝐱</mml:mi><mml:mi>c</mml:mi></mml:msub><mml:msub><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo><mml:mrow><mml:mo>∀</mml:mo><mml:mi>c</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:math></alternatives></inline-formula>
           is of shape <inline-formula><alternatives>
           <tex-math><![CDATA[(\text{{batch, height, width, channels}})]]></tex-math>
-          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, height, width, channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula></p>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, height, width, channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
+          (Perfect reconstruction)</p>
         </list-item>
       </list>
       <fig>
         <caption><p>DWT decomposition and perfect reconstruction of a
-        tensor , where is DWT 2D layer and is IDWT 2D
-        layer.<styled-content id="figU003A2DDWTlayer"></styled-content></p></caption>
+        multichannel image
+        tensor.<styled-content id="figU003A2DDWTlayer"></styled-content></p></caption>
         <graphic mimetype="image" mime-subtype="jpeg" xlink:href="DWT2DIDWT2D_PRlayer.jpg" />
       </fig>
     </sec>
@@ -1079,13 +1096,13 @@ a Creative Commons Attribution 4.0 International License (CC BY
           </list>
         </list-item>
         <list-item>
-          <p>Layer output (perfect reconstruction):
-          <inline-formula><alternatives>
+          <p>Layer output : <inline-formula><alternatives>
           <tex-math><![CDATA[\boldsymbol{X}:=\big(\boldsymbol{x}_{c}\big)_{\forall c}]]></tex-math>
           <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐗</mml:mi><mml:mo>:=</mml:mo><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mml:mo><mml:msub><mml:mi>𝐱</mml:mi><mml:mi>c</mml:mi></mml:msub><mml:msub><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mml:mo><mml:mrow><mml:mo>∀</mml:mo><mml:mi>c</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:math></alternatives></inline-formula>
           is of shape <inline-formula><alternatives>
           <tex-math><![CDATA[(\text{{batch, height, width, depth, channels}})]]></tex-math>
-          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, height, width, depth, channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula></p>
+          <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mtext mathvariant="normal">batch, height, width, depth, channels</mml:mtext><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
+          (Perfect reconstruction)</p>
         </list-item>
       </list>
       <p></p>
