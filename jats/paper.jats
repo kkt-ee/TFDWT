@@ -84,21 +84,21 @@ a Creative Commons Attribution 4.0 International License (CC BY
   of TensorFlow Layers for Fast Discrete Wavelet Transform (DWT) and
   Inverse Discrete Wavelet Transform (IDWT) in end-to-end
   backpropagation learning networks. These layers facilitate the
-  construction of multilevel DWT filterbanks and Wavelet Packet
-  Transform (WPT) filterbanks for a spatial-frequency representation of
+  construction of multilevel DWT filter banks and Wavelet Packet
+  Transform (WPT) filter banks for a spatial-frequency representation of
   the inputs and features in shallow or deep networks. A multiresolution
   signal representation using a multi-rate discrete wavelet system
   creates enriched joint natural-frequency representations. The discrete
   wavelet system partitions the frequency plane into subbands using
   orthogonal dilated and translated lowpass scaling and highpass wavelet
   function. A realization of a fast discrete wavelet system is a
-  two-band perfect reconstruction multi-rate filterbank with FIR filters
-  corresponding to the impulse responses of the scaling and wavelet
-  function with downsampling and upsampling operations. A filterbank for
-  a higher dimensional input is a seamless extension by successive
-  separable circular convolutions across each independent axis. To
-  install the latest version of the package, use
-  <monospace>pip install TFDWT</monospace>.</p>
+  two-band perfect reconstruction multi-rate filter bank with FIR
+  filters corresponding to the impulse responses of the scaling and
+  wavelet function with downsampling and upsampling operations. A filter
+  bank for a higher dimensional input is a seamless extension by
+  successive separable circular convolutions across each independent
+  axis. The command <monospace>pip install TFDWT</monospace> installs
+  the latest version of the package.</p>
 </sec>
 <sec id="statement-of-need">
   <title>2 Statement of need</title>
@@ -173,7 +173,7 @@ a Creative Commons Attribution 4.0 International License (CC BY
   biorthogonal wavelets of different families having impulse responses
   of diverse lengths. In this paper, we defined the
   platform-independent, underlying mathematics for realizing fast DWT
-  and IDWT layers with filterbank structures having FIR filters,
+  and IDWT layers with filter bank structures having FIR filters,
   downsamplers and upsamplers. Although our realization of the discrete
   wavelet system is in TensorFlow 2, a seamless reproduction of the
   computations is possible in other deep learning frameworks.</p>
@@ -200,16 +200,17 @@ a Creative Commons Attribution 4.0 International License (CC BY
   shown in
   <xref alt="[fig:bior31impulse]" rid="figU003Abior31impulse">[fig:bior31impulse]</xref>.
   These FIR filters are the building blocks of a two-band perfect
-  reconstruction filterbank for realizing fast discrete wavelet systems.
+  reconstruction filter bank for realizing fast discrete wavelet
+  systems.
   <xref alt="[fig:2BPRFB]" rid="figU003A2BPRFB">[fig:2BPRFB]</xref>
-  shows a two-band perfect reconstruction filterbank that operates on
+  shows a two-band perfect reconstruction filter bank that operates on
   one-dimensional inputs, i.e., sequences in
   <inline-formula><alternatives>
   <tex-math><![CDATA[l^{2}(\mathbb{\mathbb{Z}})]]></tex-math>
   <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msup><mml:mi>l</mml:mi><mml:mn>2</mml:mn></mml:msup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>ℤ</mml:mi><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:mrow></mml:math></alternatives></inline-formula>.
   The analysis and synthesis bank in orthogonal wavelet systems have
   identical lowpass and highpass FIR filters but differ in biorthogonal
-  wavelet systems. In biorthogonal wavelet filterbanks,
+  wavelet systems. In biorthogonal wavelet filter banks,
   <inline-formula><alternatives>
   <tex-math><![CDATA[\tilde{g}\big[n\big]]]></tex-math>
   <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mover><mml:mi>g</mml:mi><mml:mo accent="true">̃</mml:mo></mml:mover><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">[</mml:mo><mml:mi>n</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">]</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
@@ -234,8 +235,8 @@ a Creative Commons Attribution 4.0 International License (CC BY
   </fig>
   <sec id="circular-convolution-operators">
     <title>3.1 Circular convolution operators</title>
-    <p>The four matrices in the two band perfect reconstruction
-    filterbank in
+    <p>The four matrices in the two band perfect reconstruction filter
+    bank in
     <xref alt="[fig:2BPRFB]" rid="figU003A2BPRFB">[fig:2BPRFB]</xref>
     are — (i) <inline-formula><alternatives>
     <tex-math><![CDATA[\boldsymbol{G}]]></tex-math>
@@ -271,8 +272,8 @@ a Creative Commons Attribution 4.0 International License (CC BY
     <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>h</mml:mi><mml:mo>=</mml:mo><mml:mover><mml:mi>h</mml:mi><mml:mo accent="true">̃</mml:mo></mml:mover></mml:mrow></mml:math></alternatives></inline-formula>
     for orthogonal wavelets.</p>
     <fig>
-      <caption><p>Two band perfect reconstruction
-      filterbank.<styled-content id="figU003A2BPRFB"></styled-content></p></caption>
+      <caption><p>Two band perfect reconstruction filter
+      bank.<styled-content id="figU003A2BPRFB"></styled-content></p></caption>
       <graphic mimetype="image" mime-subtype="jpeg" xlink:href="DWTFB.jpg" />
     </fig>
     <sec id="analysis-matrix">
@@ -606,7 +607,7 @@ a Creative Commons Attribution 4.0 International License (CC BY
   <sec id="two-dimensional-discrete-wavelet-system">
     <title>4.1 Two-dimensional discrete wavelet system</title>
     <p>The pixel values in an image are a function of two independent
-    spatial axes. A DWT 2D filterbank is a separable transform with
+    spatial axes. A DWT 2D filter bank is a separable transform with
     row-wise filtering followed by column-wise filtering that yields
     four subbands - LL, LH, HL and HH. A two-dimensional discrete
     wavelet system is,</p>
@@ -633,7 +634,7 @@ a Creative Commons Attribution 4.0 International License (CC BY
     high-frequency subbands representing horizontal, vertical and
     diagonal features.
     <xref alt="[fig:2BPRFB-2]" rid="figU003A2BPRFB-2">[fig:2BPRFB-2]</xref>
-    illustrates a separable 2D DWT perfect reconstruction filterbank.
+    illustrates a separable 2D DWT perfect reconstruction filter bank.
     The 2D layers operate on batched, multichannel tensors of shape
     <inline-formula><alternatives>
     <tex-math><![CDATA[(\text{{batch, height, width, channels}})]]></tex-math>
@@ -653,8 +654,8 @@ a Creative Commons Attribution 4.0 International License (CC BY
       <graphic mimetype="image" mime-subtype="jpeg" xlink:href="SpatialFrequencyTilingLv1.jpg" />
     </fig>
     <fig>
-      <caption><p>Separable DWT 2D perfect reconstruction
-      filterbank.<styled-content id="figU003A2BPRFB-2"></styled-content></p></caption>
+      <caption><p>Separable DWT 2D perfect reconstruction filter
+      bank.<styled-content id="figU003A2BPRFB-2"></styled-content></p></caption>
       <graphic mimetype="image" mime-subtype="jpeg" xlink:href="DWTFB2D.jpg" />
     </fig>
     <sec id="dwt-2d-layer">
@@ -1135,16 +1136,16 @@ a Creative Commons Attribution 4.0 International License (CC BY
     </sec>
   </sec>
 </sec>
-<sec id="multilevel-wavelet-filterbanks">
-  <title>5 Multilevel wavelet filterbanks</title>
+<sec id="multilevel-wavelet-filter-banks">
+  <title>5 Multilevel wavelet filter banks</title>
   <p>The above-discussed DWT and IDWT layers are building blocks in
-  constructing multilevel DWT filterbanks.
+  constructing multilevel DWT filter banks.
   <xref alt="[fig:MultilevelDWTtiling]" rid="figU003AMultilevelDWTtiling">[fig:MultilevelDWTtiling]</xref>
   shows the partitioning of the 1D frequency axis and tiling of the 2D
   frequency plane using a level-4 1D and 2D DWT. The multilevel DWT
   successively decomposes the low-frequency feature. If the
   high-frequency features are also decomposed successively, then we get
-  a Wavelet Packet Transform (WPT) filterbank.</p>
+  a Wavelet Packet Transform (WPT) filter bank.</p>
   <fig>
     <caption><p>Spatial-frequency tiling by DWT level 4 decomposition of
     a sequence of length N (top) and image of shape Nimes N
