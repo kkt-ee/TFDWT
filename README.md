@@ -23,6 +23,9 @@ Fast $1\text{D}$, $2\text{D}$ and $3\text{D}$ Discrete Wavelet Transform ($\text
 
 ## Installation guide
 
+*The installation of the TFDWT package is recommended inside a virtual environment with tensorflow[GPU] installed at first*
+
+
 **Install from PyPI** (Option $1$)
 
 ```bash
@@ -121,9 +124,6 @@ x_hat = IDWT3D(wave=wave)(LLLLLHLHLLHHHLLHLHHHLHHH) # Synthesis
         CUDA 12.5.1
 ```
 
-<br/><br/>
-
-*The installation of the TFDWT package is recommended inside a virtual environment with tensorflow[GPU] installed at first*
 
 <br/><br/><br/>
 
