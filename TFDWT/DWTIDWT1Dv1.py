@@ -171,10 +171,10 @@ class IDWT1D(tf.keras.layers.Layer):
         return _1
     #tf.stack([rejoin(_) for _ in __], axis=-1)
 
-    def compute_output_shape(self, input_shape):
-        batch_size, height, width, channels = input_shape
-        new_height, new_width, new_channels = height *2, width *2, channels //4
-        return (batch_size, new_height, new_width, new_channels)
+    # def compute_output_shape(self, input_shape):
+    #     batch_size, height, width, channels = input_shape
+    #     new_height, new_width, new_channels = height *2, width *2, channels //4
+    #     return (batch_size, new_height, new_width, new_channels)
    
     def get_config(self):
         config = super(IDWT1D, self).get_config()
