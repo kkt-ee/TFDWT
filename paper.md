@@ -27,7 +27,7 @@ TFDWT is an open-source Python package that allows the creation of TensorFlow La
 
 # 2 Statement of need
 
-In machine or deep learning, an efficient multiresolution representation of data often helps to build economical and explainable models. The Wavelet toolbox [@misiti1996wavelet] by MathWorks is a proprietary software that has served the requirements for D-dimensional wavelet transforms in the MATLAB environment for a few decades. Several open-source packages are now available for 1D and 2D DWT in Python. Pywavelets [@lee2019pywavelets] is a D-dimensional wavelet transform library in Python that works with Numpy [@harris2020array] arrays. However, it is challenging to directly use Pywavelets with the symbolic tensors in TensorFlow [@developers2022tensorflow] layers and CUDA [@fatica2008cuda]. WaveTF [@versaci2021wavetf] is a solution for constructing 1D and 2D DWT layers in TensorFlow but is limited to only Haar and Db2 wavelets. The package tensorflow-wavelets [@tensorflow-wavelets-1.1.2] supports multiple wavelets, but it has a minor bug in perfect reconstruction due to the padding and boundary effects in processing the finite-length inputs. In Pytorch [@imambi2021pytorch], the pytorch-wavelets [@pytorch-wavelets-1.3.0] package allows the construction of 1D and 2D DWT layers.
+In machine or deep learning, an efficient multiresolution representation of data often helps to build economical and explainable models. The Wavelet toolbox [@misiti1996wavelet] by MathWorks is a proprietary software that has served the requirements for D-dimensional wavelet transforms in the MATLAB environment for a few decades. Several open-source packages are now available for 1D and 2D DWT in Python. Pywavelets [@lee2019pywavelets] is a D-dimensional wavelet transform library in Python that works with Numpy [@harris2020array] arrays. However, it is challenging to directly use Pywavelets with the symbolic tensors in TensorFlow [@developers2022tensorflow] layers and CUDA [@fatica2008cuda]. WaveTF [@versaci2021wavetf] is a solution for constructing 1D and 2D DWT layers in TensorFlow but is limited to only Haar and Db2 wavelets. The package tensorflow-wavelets [@tensorflow-wavelets-1.1.2] supports multiple wavelets, but it has a minor bug in perfect reconstruction due to the padding and boundary effects in processing the finite-length inputs. In Pytorch [@imambi2021pytorch], the pytorch-wavelets [@pytorch-wavelets-1.3.0] package allows the construction of 1D and 2D DWT layers. However, there are limited libraries for 3D and higher transforms with a wide range of wavelet families for Graphics Processing Unit (GPU) computations. 
 
 For a $\text{{D}}$\-dimensional wavelet $\boldsymbol{\psi} \in L^{2}(\mathbb{R})^{\text{{D}}}$, a discrete wavelet system defined by $\big\{\boldsymbol{\psi}_{m,\boldsymbol{p}}:m\in\mathbb{Z},\boldsymbol{p}\in\mathbb{Z}^{\text{{D}}}\big\}$ forms an orthonormal basis in $\boldsymbol{\psi}\in L^{2}(\mathbb{R})^{\text{{D}}}$, where $\boldsymbol{\psi}_{m,\boldsymbol{p}}(\boldsymbol{x}):=2^{m}\psi(2^{m}\boldsymbol{x}-\boldsymbol{p})$. Then, by definition the DWT of $\boldsymbol{x}\in\mathbb{Z}^{\text{{D}}}$ is $\boldsymbol{x}\mapsto(\langle\boldsymbol{x},\psi_{m,\boldsymbol{p}}\rangle)_{m,\boldsymbol{p}}$, where $m$ is the dilation parameter and $\boldsymbol{p}$ is the shift or translation parameter. The TFDWT Python package is a simple standalone DWT and IDWT library with minimal dependencies that allow computation with symbolic tensors and CUDA. This release supports up to 3D forward and inverse transforms with various orthogonal and biorthogonal wavelet families. A seamless package upgrade for higher dimensional DWT is possible by separable transforms. The boundary effects are taken care of with cyclic convolutions instead of padding. The package supports orthogonal and biorthogonal wavelets of different families having impulse responses of diverse lengths. In this paper, we defined the platform-independent, underlying mathematics for realizing fast DWT and IDWT layers with filter bank structures having FIR filters, downsamplers and upsamplers. Although our realization of the discrete wavelet system is in TensorFlow 2, a seamless reproduction of the computations is possible in other deep learning frameworks.
 
@@ -146,9 +146,52 @@ $$
 
 A DWT 1D layer takes batched, multichannel sequences of shape $(\text{{batch, length, channels}})$ as input and computes subbands of each sequence using equation \[eq:DWToneSequence\]. The shape of the DWT 1D layer output after grouping the lowpass and highpass subbands of each sequence is $(\text{batch}, \text{length}/2, 2 \times \text{channels})$.
 
+**Algorithm 1a**
+
+1.  Input $\boldsymbol{X}$ of shape  $(\text{{batch, length, channels}})$.
+    
+2.  Generate analysis matrix $\boldsymbol{A}$ using $\text{{length}}$ of input.
+    
+3.  For each batched channel $\boldsymbol{x}_{c}\in\boldsymbol{X}$ of shape $(\text{{batch, length}})$:  
+    (omitting suffix $c$ in $\boldsymbol{x}$ below for simplicity of  notation)
+    
+     Batch DWT 1D:  $\boldsymbol{q}_{c}=\boldsymbol{A}\boldsymbol{x}^{T}$
+       
+        
+4.  Stacking for all $c$ channels: $\boldsymbol{Q}:=\big(\boldsymbol{q}_{c}\big)_{\forall c}$ to a shape $(\text{{batch, length, channels}})$.
+    
+5.  Group subbands and return an output $\boldsymbol{Q}^{(\text{{grouped}})}$ of shape $(\text{batch}, \text{length}/2, , 2\times\text{channels})$
+    
+	```python
+		# Grouping two subbands in DWT 1D
+		mid = int(Q.shape[1]/2)
+		L = Q[:,:mid,:]
+		H = Q[:,mid:,:]
+		out = Concatenate([L, H], axis=-1)
+	```
+
+
 ## 3.3 IDWT 1D layer
 
 An IDWT 1D layer takes batched, multichannel subbands of shape $(\text{batch}, \text{length}/2, 2 \times \text{channels})$. as input and reconstructs each batched, multichannel sequence using equation \[eq:IDWToneSequence\]. The shape of the IDWT 1D layer output is $(\text{{batch, length, channels}})$.
+
+**Algorithm 1b**
+
+1.  Input $\boldsymbol{Q}^{(\text{{grouped}})}$ of shape  $(\text{batch}, \text{length}/2, 2\times\text{channels})$
+    
+2.  Ungroup the subbands to get $\boldsymbol{Q}$ of shape $(\text{{batch, length, channels}})$
+    
+3.  Generate synthesis matrix $\boldsymbol{S}$ using $\text{{length}}$ of $\boldsymbol{Q}$.
+    
+4.  For each batched channel $\boldsymbol{q}_{c}\in\boldsymbol{Q}$ of shape $(\text{{batch, length}})$:  
+    (omitting suffix $c$ in $\boldsymbol{q}$ below for simplicity of  notation) 
+	- Batched IDWT 1D: $\boldsymbol{x}=\boldsymbol{S}\boldsymbol{q}^{T}$, i.e., a perfect reconstruction, where, $\boldsymbol{S}=\boldsymbol{A}^{T}$ for orthogonal   wavelets
+        
+5.  Layer output (perfect reconstruction): $\boldsymbol{X}:=\big(\boldsymbol{x}_{c}\big)_{\forall c}$ is of  shape $(\text{{batch, length, channels}})$
+
+
+
+
 
 # 4 Higher dimensional discrete wavelet systems
 
@@ -185,9 +228,9 @@ A DWT 2D layer operates on input tensors of shape $(\text{{batch, height, width,
 3.  For each batched channel $\boldsymbol{x}_{c}\in\boldsymbol{X}$ of shape $(\text{{batch, height, width}})$:  
     (omitting suffix $c$ in $\boldsymbol{x}$ below for simplicity of  notation)
     
-    1.  Row-wise batch DWT: $\boldsymbol{A}\boldsymbol{x}_{021}^{T}:=\text{Einsum} \big(ij,bjk \rightarrow bik \big)$
+    1.  Row-wise batch DWT 1D: $\boldsymbol{A}\boldsymbol{x}_{021}^{T}:=\text{Einsum} \big(ij,bjk \rightarrow bik \big)$
         
-    2.  Column-wise batch DWT: $\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{021}^{T})_{021}^{T} :=\text{Einsum} \big(ij,bjk\rightarrow bik\big)$
+    2.  Column-wise batch DWT 1D: $\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{021}^{T})_{021}^{T} :=\text{Einsum} \big(ij,bjk\rightarrow bik\big)$
         
         Or, equivalently, DWT of a batched channel $\boldsymbol{x}$ is,
         
@@ -199,7 +242,7 @@ A DWT 2D layer operates on input tensors of shape $(\text{{batch, height, width,
     
 	```python
 		# Grouping four subbands in DWT 2D
-		mid = int(LLLHHLHH.shape[1]/2)
+		mid = int(Q.shape[1]/2)
 		LL = Q[:,:mid,:mid,:]
 		LH = Q[:,mid:,:mid,:]
 		HL = Q[:,:mid,mid:,:]
@@ -209,7 +252,7 @@ A DWT 2D layer operates on input tensors of shape $(\text{{batch, height, width,
 
 ### 4.1.2 IDWT 2D layer
 
-An IDWT 3D layer operates on input tensors of shape $(\text{batch}, \text{height}/2, \text{width}/2, 4\times \text{channels})$ and produces an output of shape $(\text{{batch, height, width, channels}})$ as described in Algorithm 2b.
+An IDWT 2D layer operates on input tensors of shape $(\text{batch}, \text{height}/2, \text{width}/2, 4\times \text{channels})$ and produces an output of shape $(\text{{batch, height, width, channels}})$ as described in Algorithm 2b.
 
 **Algorithm 2b**
 
@@ -222,9 +265,9 @@ An IDWT 3D layer operates on input tensors of shape $(\text{batch}, \text{height
 4.  For each batched channel $\boldsymbol{q}_{c}\in\boldsymbol{Q}$ of shape $(\text{{batch, height, width}})$:  
     (omitting suffix $c$ in $\boldsymbol{q}$ below for simplicity of  notation)
     
-    1.   Row-wise batch IDWT: $\boldsymbol{S}\boldsymbol{q}_{021}^{T}:=\text{Einsum}\big(ij,bjk\rightarrow bik\big)$
+    1.   Row-wise batch IDWT 1D: $\boldsymbol{S}\boldsymbol{q}_{021}^{T}:=\text{Einsum}\big(ij,bjk\rightarrow bik\big)$
         
-    2.  Column wise batch IDWT: $\boldsymbol{S}(\boldsymbol{S}\boldsymbol{q}_{021}^{T})_{021}^{T}:=\text{Einsum}\big(ij,bjk\rightarrow bik\big)$
+    2.  Column wise batch IDWT 1D: $\boldsymbol{S}(\boldsymbol{S}\boldsymbol{q}_{021}^{T})_{021}^{T}:=\text{Einsum}\big(ij,bjk\rightarrow bik\big)$
         
         or equivalently, a perfect reconstruction,
         
@@ -267,11 +310,11 @@ A DWT 3D layer operates on input tensors of shape $(\text{{batch, height, width,
 3.  For each batched channel $\boldsymbol{x}_{c}\in\boldsymbol{X}$ of shape $(\text{{batch, height, width, depth}})$:  
     (omitting suffix $c$ in $\boldsymbol{x}$ below for simplicity of notation)
     
-    1.  Row-wise batch DWT:   $\boldsymbol{A}\boldsymbol{x}_{0213}^{T}:=\text{{Einsum}}\big(ij,bjkl\rightarrow bikl\big)$
+    1.  Row-wise batch DWT 1D:   $\boldsymbol{A}\boldsymbol{x}_{0213}^{T}:=\text{{Einsum}}\big(ij,bjkl\rightarrow bikl\big)$
         
-    2.  Column-wise batch DWT:  $\boldsymbol{A}\left(\boldsymbol{A}\boldsymbol{x}_{0213}^{T}\right)_{0213}^{T}:=\text{{Einsum}}\big(ij,bjkl\rightarrow bikl\big)$
+    2.  Column-wise batch DWT 1D: $\boldsymbol{A}\left(\boldsymbol{A}\boldsymbol{x}_{0213}^{T}\right)_{0213}^{T}:=\text{{Einsum}}\big(ij,bjkl\rightarrow bikl\big)$
         
-    3.  Depth-wise batch IDWT: $\boldsymbol{A}(\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{0213}^{T})_{0213}^{T})_{0132}^{T}:=\text{{Einsum}}\big(ik,bjkl\rightarrow bjil\big)$
+    3.  Depth-wise batch IDWT 1D: $\boldsymbol{A}(\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{0213}^{T})_{0213}^{T})_{0132}^{T}:=\text{{Einsum}}\big(ik,bjkl\rightarrow bjil\big)$
         
         Therefore, DWT of $\boldsymbol{x}$ yield coefficients:
         $$\boldsymbol{q}_{c}:=\text{{DWT}}\left(\boldsymbol{x}\right)=\left[\boldsymbol{A}(\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{0213}^{T})_{0213}^{T})_{0132}^{T}\right]{}_{0132}^{T}$$
@@ -283,6 +326,7 @@ A DWT 3D layer operates on input tensors of shape $(\text{{batch, height, width,
 
 	```python
 		# Grouping Eight subbands in 3D DWT
+        mid = int(Q.shape[2]/2)
 		LLL = Q[:,:mid,:mid,:mid,:]
 		LLH = Q[:,mid:,:mid,:mid,:]
 		LHL = Q[:,:mid,mid:,:mid,:]
@@ -291,7 +335,6 @@ A DWT 3D layer operates on input tensors of shape $(\text{{batch, height, width,
 		HLH = Q[:,mid:,mid:,mid:,:]
 		HHL = Q[:,:mid,mid:,mid:,:]
 		HHH = Q[:,_mid:,mid:,mid:,:]
-	
 		output = Concatenate([LLL, LLH, LHL, LHH, HLL, HLH, HHL, HHH], axis=-1)
 	```
 
@@ -314,11 +357,11 @@ An IDWT 3D layer operates on input tensors of shape $(\text{batch}, \text{height
 4.  For each batched channel $\boldsymbol{q}_{c}\in\boldsymbol{Q}$ of shape $(\text{{batch, height, width, depth}})$:  
     (omitting suffix $c$ in $\boldsymbol{q}$ below for simplicity of  notation)
     
-    1.  Row-wise batch IDWT: $\boldsymbol{S}\boldsymbol{q}_{0132}^{T}:=\text{{Einsum}}\big(ik,bjkl\rightarrow bjil\big)$
+    1.  Row-wise batch IDWT 1D: $\boldsymbol{S}\boldsymbol{q}_{0132}^{T}:=\text{{Einsum}}\big(ik,bjkl\rightarrow bjil\big)$
         
-    2.  Column-wise batch IDWT: $\boldsymbol{S} (\boldsymbol{S}\boldsymbol{q}_{0132}^{T})_{0132}:=\text{{Einsum}}\big(ij,bjkl\rightarrow bikl\big)$
+    2.  Column-wise batch IDWT 1D: $\boldsymbol{S} (\boldsymbol{S}\boldsymbol{q}_{0132}^{T})_{0132}:=\text{{Einsum}}\big(ij,bjkl\rightarrow bikl\big)$
         
-    3.  Depth-wise batch IDWT: $\boldsymbol{S}(\boldsymbol{S}(\boldsymbol{S}\boldsymbol{q}_{0132}^{T})_{0132}^{T})_{0213}^{T}:=\text{{Einsum}}\big(ij,bjkl\rightarrow bikl\big)$
+    3.  Depth-wise batch IDWT 1D: $\boldsymbol{S}(\boldsymbol{S}(\boldsymbol{S}\boldsymbol{q}_{0132}^{T})_{0132}^{T})_{0213}^{T}:=\text{{Einsum}}\big(ij,bjkl\rightarrow bikl\big)$
         
         or equivalently, a perfect reconstruction,
         
