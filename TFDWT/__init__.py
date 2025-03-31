@@ -16,6 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>."""
 
+
+
 import tensorflow as tf
 import keras
 import numpy as np
@@ -26,3 +28,9 @@ from TFDWT.get_A_matrix_dwt_analysisFB_unit import get_A_matrix_dwt_analysisFB_u
 
 # from TFDWT3D.DWTIDWT1Dv1 import DWT1D, IDWT1D
 # from TFDWT3D.DWTIDWT2Dv1 import DWT2D, IDWT2D
+
+
+
+
+
+__version__="0.0.2"

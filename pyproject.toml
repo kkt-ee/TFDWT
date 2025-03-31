@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "TFDWT"
-version = "0.0.1"
+version = "0.0.2"
 authors = [
   { name="Kishore Kumar Tarafdar", email="kishorektarafdar@gmail.com" },
 ]
@@ -19,9 +19,6 @@ classifiers = [
 ]
 license = "GPL-3.0-or-later"
 license-files = [ "LICENSE" ]
-
-#[tool.hatch.build]
-#include = ["LICENSE", "README.md", "TFDWT/**"]
 
 [project.urls]
 Homepage = "https://github.com/kkt-ee/TFDWT"

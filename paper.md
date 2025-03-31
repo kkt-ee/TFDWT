@@ -1,34 +1,24 @@
-* * *
-
+---
 title: 'TFDWT: Fast Discrete Wavelet Transform TensorFlow Layers'
-
 tags:
-
-   - Discrete Wavelet Transform
-   - Deep Learning
-   - Python
-   - Tensorflow
-   - CUDA
-   
+  - Python
+  - Tensorflow
+  - Discrete Wavelet Transform
+  - Multiresolution analysis
+  - Multirate systems
+  - Deep Learning
+  - CUDA
 authors:
+  - name: Kishore K. Tarafdar
+    orcid: 0009-0001-4548-7639
+  - name: Vikram M. Gadre
+    orcid: 0000-0001-8439-5625
 
-   - name: Kishore K. Tarafdar  
-     orcid: 0009-0001-4548-7639  
-
-   - name: Vikram M. Gadre  
-     orcid: 0000-0001-8439-5625  
-     corresponding: true
-     
 affiliations:
-
-- name: Department of Electrical Engineering, Indian Institute of Technology Bombay, India
-    
-date: 1 April 2025  
-
+ - name: Department of Electrical Engineering, Indian Institute of Technology Bombay, India
+date: 1 April 2025
 bibliography: paper.bib
-
-* * *
-
+---
 
 
 # 1 Summary

@@ -1,4 +1,8 @@
+## Steps to update repository in PyPI ---
 # Change version number in .toml file
+# Change version in __init__.py  file
 # python -m build
 # twine check dist/*
-python -m twine upload --repository pypi --config-file .pypirc dist/*
+
+## Upload to PyPi
+# python -m twine upload --repository pypi --config-file .pypirc dist/*
