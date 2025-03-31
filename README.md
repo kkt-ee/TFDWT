@@ -1,6 +1,7 @@
 # TFDWT: Fast Discrete Wavelet Transform TensorFlow Layers
 
-[![PyPI Version](https://img.shields.io/pypi/v/TFDWT?label=PyPI)](https://pypi.org/project/TFDWT/)
+[![PyPI Version](https://img.shields.io/pypi/v/TFDWT?label=PyPI)](https://pypi.org/project/TFDWT/) 
+[![PyPI Version](https://img.shields.io/pypi/pyversions/TFDWT)](https://pypi.org/project/TFDWT/)
 
 Fast $1\text{D}$, $2\text{D}$ and $3\text{D}$ Discrete Wavelet Transform ($\text{DWT}$) and Inverse Discrete Wavelet Transform ($\text{IDWT}$) layers for backpropagation networks.
 
