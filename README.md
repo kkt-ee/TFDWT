@@ -13,6 +13,7 @@ Fast $1\text{D}$ and $2\text{D}$ Discrete Wavelet Transform ($\text{DWT}$) and I
         Reverse biorthogonal (rbio)
 ```
 
+***Note ―*** *Permissible input shapes are in powers or $2^m$ where $m$ is a Natural number. Additionally, for 2D and 3D transforms, the shape of the input must be square and cube.*
 
   
 <br/><br/><br/>
@@ -98,7 +99,7 @@ x_hat = IDWT3D(wave=wave)(LLLLLHLHLLHHHLLHLHHHLHHH) # Synthesis
 
  <br/><br/><br/>
 
-**NOTE ―** Using the above forward and inverse transforms the above $\text{DWT}$ and $\text{IDWT}$ layers can be used to construct multilevel $\text{DWT}$ filter banks and $\text{Wave Packet}$ filter banks.
+***NOTE ―*** Using the above forward and inverse transforms the above $\text{DWT}$ and $\text{IDWT}$ layers can be used to construct multilevel $\text{DWT}$ filter banks and $\text{Wave Packet Transform}$ filter banks.
 
 
 
