@@ -200,10 +200,10 @@ A DWT 2D layer operates on input tensors of shape $(\text{{batch, height, width,
 	```python
 		# Grouping four subbands in DWT 2D
 		mid = int(LLLHHLHH.shape[1]/2)
-		LL = LLLHHLHH[:,:mid,:mid,:]
-		LH = LLLHHLHH[:,mid:,:mid,:]
-		HL = LLLHHLHH[:,:mid,mid:,:]
-		HH = LLLHHLHH[:,mid:,mid:,:]
+		LL = Q[:,:mid,:mid,:]
+		LH = Q[:,mid:,:mid,:]
+		HL = Q[:,:mid,mid:,:]
+		HH = Q[:,mid:,mid:,:]
 		output = Concatenate([LL, LH, HL, HH], axis=-1)
 	```
 
@@ -283,14 +283,14 @@ A DWT 3D layer operates on input tensors of shape $(\text{{batch, height, width,
 
 	```python
 		# Grouping Eight subbands in 3D DWT
-		LLL = LLLLLHLHLLHHHLLHLHHHLHHH[:,:mid,:mid,:mid,:]
-		LLH = LLLLLHLHLLHHHLLHLHHHLHHH[:,mid:,:mid,:mid,:]
-		LHL = LLLLLHLHLLHHHLLHLHHHLHHH[:,:mid,mid:,:mid,:]
-		LHH = LLLLLHLHLLHHHLLHLHHHLHHH[:,mid:,mid:,:mid,:]
-		HLL = LLLLLHLHLLHHHLLHLHHHLHHH[:,:mid,:mid,mid:,:]
-		HLH = LLLLLHLHLLHHHLLHLHHHLHHH[:,mid:,mid:,mid:,:]
-		HHL = LLLLLHLHLLHHHLLHLHHHLHHH[:,:mid,mid:,mid:,:]
-		HHH = LLLLLHLHLLHHHLLHLHHHLHHH[:,_mid:,mid:,mid:,:]
+		LLL = Q[:,:mid,:mid,:mid,:]
+		LLH = Q[:,mid:,:mid,:mid,:]
+		LHL = Q[:,:mid,mid:,:mid,:]
+		LHH = Q[:,mid:,mid:,:mid,:]
+		HLL = Q[:,:mid,:mid,mid:,:]
+		HLH = Q[:,mid:,mid:,mid:,:]
+		HHL = Q[:,:mid,mid:,mid:,:]
+		HHH = Q[:,_mid:,mid:,mid:,:]
 	
 		output = Concatenate([LLL, LLH, LHL, LHH, HLL, HLH, HHL, HHH], axis=-1)
 	```
