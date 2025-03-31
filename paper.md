@@ -37,13 +37,13 @@ A discrete wavelet system has a lowpass scaling function and a highpass wavelet.
 
 ![Wavelets and scaling functions of bior3.1 analysis (left) and synthesis (right).\label{fig:bior31}](figs/waveBior31.png){ width=60% }
 
-![Impulse responses of different bior3.1 analysis (left two) and synthesis (right two) lowpass and highpass FIR filters.\label{fig:bior31impulse}](figs/impulsebior31.png){ width=75% }
+![Impulse responses of different bior3.1 analysis (left two) and synthesis (right two) lowpass and highpass FIR filters.\label{fig:bior31impulse}](figs/impulsebior31.png){ width=70% }
 
 ## 3.1 Circular convolution operators
 
 The four matrices in the two band perfect reconstruction filter bank in \autoref{fig:2BPRFB} are — (i) $\boldsymbol{G}$ is lowpass analysis matrix, (ii) $\boldsymbol{H}$ is highpass analysis matrix, (iii) $\tilde{\boldsymbol{G}}$ is lowpass synthesis matrix and (iv) $\tilde{\boldsymbol{H}}$ is highpass synthesis matrix. These matrices are operators for circular convolution, constructed by circular shifts of the corresponding FIR filters $g\big[n-k\big]$, $h\big[n-k\big]$, $\tilde{g}\big[n-k\big]$ and $\tilde{h}\big[n-k\big]$, where $g=\tilde{g}$ and $h=\tilde{h}$ for orthogonal wavelets.
 
-![Two band perfect reconstruction filter bank.\label{fig:2BPRFB}](figs/DWTFB.jpg){ width=60% }
+![Two band perfect reconstruction filter bank.\label{fig:2BPRFB}](figs/DWTFB.jpg){ width=50% }
 
 ### 3.1.1 Analysis matrix
 
@@ -144,24 +144,16 @@ $$
 
 ## 3.2 DWT 1D layer
 
-A DWT 1D layer takes batched, multichannel sequences of shape $(\text{{batch, length, channels}})$ as input and computes subbands of each sequence using equation \[eq:DWToneSequence\]. The shape of the DWT 1D layer output after grouping the lowpass and highpass subbands of each sequence is $(\text{batch}, \text{length}/2, 2 \times \text{channels})$.
+A DWT 1Dayer operates on input tensors of shape  $(\text{{batch, length, channels}})$ and produces an output of shape  $(\text{batch}, \text{length}/2, 2 \times \text{channels})$. as described in Algorithm 1a.
 
-**Algorithm 1a**
+***Algorithm 1a —***
 
 1.  Input $\boldsymbol{X}$ of shape  $(\text{{batch, length, channels}})$.
-    
 2.  Generate analysis matrix $\boldsymbol{A}$ using $\text{{length}}$ of input.
-    
-3.  For each batched channel $\boldsymbol{x}_{c}\in\boldsymbol{X}$ of shape $(\text{{batch, length}})$:  
-    (omitting suffix $c$ in $\boldsymbol{x}$ below for simplicity of  notation)
-    
-     Batch DWT 1D:  $\boldsymbol{q}_{c}=\boldsymbol{A}\boldsymbol{x}^{T}$
-       
-        
+3.  For each batched channel $\boldsymbol{x}\in\boldsymbol{X}$ of shape $(\text{{batch, length}})$: $\boldsymbol{q}_{c}=\boldsymbol{A}\boldsymbol{x}^{T}$    
 4.  Stacking for all $c$ channels: $\boldsymbol{Q}:=\big(\boldsymbol{q}_{c}\big)_{\forall c}$ to a shape $(\text{{batch, length, channels}})$.
-    
 5.  Group subbands and return an output $\boldsymbol{Q}^{(\text{{grouped}})}$ of shape $(\text{batch}, \text{length}/2, , 2\times\text{channels})$
-    
+
 	```python
 		# Grouping two subbands in DWT 1D
 		mid = int(Q.shape[1]/2)
@@ -169,37 +161,27 @@ A DWT 1D layer takes batched, multichannel sequences of shape $(\text{{batch, le
 		H = Q[:,mid:,:]
 		out = Concatenate([L, H], axis=-1)
 	```
-
-
+	
 ## 3.3 IDWT 1D layer
 
-An IDWT 1D layer takes batched, multichannel subbands of shape $(\text{batch}, \text{length}/2, 2 \times \text{channels})$. as input and reconstructs each batched, multichannel sequence using equation \[eq:IDWToneSequence\]. The shape of the IDWT 1D layer output is $(\text{{batch, length, channels}})$.
+An IDWT 1D layer operates on input tensors of shape $(\text{batch}, \text{length}/2, 2 \times \text{channels})$ and produces an output of shape $(\text{{batch, length, channels}})$ as described in Algorithm 1b.
 
-**Algorithm 1b**
+***Algorithm 1b —***
 
 1.  Input $\boldsymbol{Q}^{(\text{{grouped}})}$ of shape  $(\text{batch}, \text{length}/2, 2\times\text{channels})$
-    
 2.  Ungroup the subbands to get $\boldsymbol{Q}$ of shape $(\text{{batch, length, channels}})$
-    
 3.  Generate synthesis matrix $\boldsymbol{S}$ using $\text{{length}}$ of $\boldsymbol{Q}$.
-    
-4.  For each batched channel $\boldsymbol{q}_{c}\in\boldsymbol{Q}$ of shape $(\text{{batch, length}})$:  
-    (omitting suffix $c$ in $\boldsymbol{q}$ below for simplicity of  notation) 
-	- Batched IDWT 1D: $\boldsymbol{x}=\boldsymbol{S}\boldsymbol{q}^{T}$, i.e., a perfect reconstruction, where, $\boldsymbol{S}=\boldsymbol{A}^{T}$ for orthogonal   wavelets
-        
+4.  For each batched channel $\boldsymbol{q}\in\boldsymbol{Q}$ of shape $(\text{{batch, length}})$:  $\boldsymbol{x}=\boldsymbol{S}\boldsymbol{q}^{T}$, i.e., a perfect reconstruction, where, $\boldsymbol{S}=\boldsymbol{A}^{T}$ for orthogonal   wavelets
 5.  Layer output (perfect reconstruction): $\boldsymbol{X}:=\big(\boldsymbol{x}_{c}\big)_{\forall c}$ is of  shape $(\text{{batch, length, channels}})$
-
-
-
 
 
 # 4 Higher dimensional discrete wavelet systems
 
-In sequences (1D), the DWT 1D applies to the only independent variable. To achieve high-dimensional DWT, the DWT 1D needs to be applied separably to all the independent variables one after the other. For example, the DWT of an image (2D) is a row-wise DWT 1D followed by a column-wise DWT 1D. Similarly, the reconstruction is column-wise IDWT 1D followed by a row-wise IDWT 1D.
+In sequences (1D), the DWT 1D applies along the only independent variable. To achieve higher dimensional DWT, the same DWT 1D is successively applied separably to all the independent variables. For example, in an image (2D) the DWT 2D is a row-wise DWT 1D followed by a column-wise DWT 1D. Similarly, the reconstruction is column-wise IDWT 1D followed by a row-wise IDWT 1D.
 
 ## 4.1 Two-dimensional discrete wavelet system
 
-The pixel values in an image are a function of two independent spatial axes. A DWT 2D filter bank is a separable transform with row-wise filtering followed by column-wise filtering that yields four subbands - LL, LH, HL and HH. A two-dimensional discrete wavelet system is given by,
+The pixel values in an image are a function of two independent spatial axes. A DWT 2D filter bank is a separable transform with row-wise filtering followed by column-wise filtering that yields four subbands - LL, LH, HL and HH. A two-dimensional discrete wavelet system is,
 
 $$
 \boldsymbol{q}	=\text{{DWT}}\big(\boldsymbol{x}\big):=\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{021})_{021}^{T} \text{\hspace{2.1cm}—Analysis} 
@@ -211,7 +193,7 @@ $$
 
 where, $\boldsymbol{A}$ and $\boldsymbol{S}$ are the same analysis and synthesis matrices defined for one-dimensional wavelet system. \autoref{fig:subdband2d} shows an $N\times N$ image and its four localized spatial-frequency subbands after DWT. Here, the low-frequency band is LL, and the other three are high-frequency subbands representing horizontal, vertical and diagonal features. \autoref{fig:2BPRFB-2} illustrates a separable 2D DWT perfect reconstruction filter bank. The 2D layers operate on batched, multichannel tensors of shape $(\text{{batch, height, width, channels}})$, where each image is of shape height and width. \autoref{fig:2DDWTlayer} illustrates input, output and perfect reconstruction by DWT 2D and IDWT 2D layers. The Multiresolution Encoder-Decoder Convolutional Neural Network in [@tarafdar2025multiresolution] uses these layers.
 
-![An image of shape  (left) and spatial-frequency tiled subbands (right) after a level-1 DWT 2D decomposition.\label{fig:subdband2d}](figs/SpatialFrequencyTilingLv1.jpg){ width=70% }
+![Natural domain (left) and spatial-frequency tiling (right) after a DWT 2D.\label{fig:subdband2d}](figs/SpatialFrequencyTilingLv1.jpg){ width=70% }
 
 ![Separable DWT 2D perfect reconstruction filter bank.\label{fig:2BPRFB-2}](figs/DWTFB2D.jpg){ width=70% }
 
@@ -219,27 +201,19 @@ where, $\boldsymbol{A}$ and $\boldsymbol{S}$ are the same analysis and synthesis
 
 A DWT 2D layer operates on input tensors of shape $(\text{{batch, height, width, channels}})$ and produces an output of shape $(\text{batch}, \text{height}/2, \text{width}/2, 4\times \text{channels})$ as described in Algorithm 2a.
 
-**Algorithm 2a**
+***Algorithm 2a —***
 
 1.  Input $\boldsymbol{X}$ of shape  $(\text{{batch, height, width, channels}})$.
-    
 2.  Generate analysis matrix $\boldsymbol{A}$ using $\text{{height}}$   and $\text{{width}}$ of input.
-    
 3.  For each batched channel $\boldsymbol{x}_{c}\in\boldsymbol{X}$ of shape $(\text{{batch, height, width}})$:  
     (omitting suffix $c$ in $\boldsymbol{x}$ below for simplicity of  notation)
-    
     1.  Row-wise batch DWT 1D: $\boldsymbol{A}\boldsymbol{x}_{021}^{T}:=\text{Einsum} \big(ij,bjk \rightarrow bik \big)$
-        
     2.  Column-wise batch DWT 1D: $\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{021}^{T})_{021}^{T} :=\text{Einsum} \big(ij,bjk\rightarrow bik\big)$
-        
         Or, equivalently, DWT of a batched channel $\boldsymbol{x}$ is,
-        
         $$\boldsymbol{q}_{c}=\text{{DWT}}\big(\boldsymbol{x}\big)\text{{ or, }}\boldsymbol{q}_{c}=\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{021})_{021}^{T}$$
-        
 4.  Stacking for all $c$ channels: $\boldsymbol{Q}:=\big(\boldsymbol{q}_{c}\big)_{\forall c}$ to a shape $(\text{{batch, height, width, channels}})$.
-    
 5.  Group subbands and return an output $\boldsymbol{Q}^{(\text{{grouped}})}$ of shape $(\text{batch}, \text{height}/2, \text{width}/2, 4\times\text{channels})$
-    
+
 	```python
 		# Grouping four subbands in DWT 2D
 		mid = int(Q.shape[1]/2)
@@ -254,30 +228,19 @@ A DWT 2D layer operates on input tensors of shape $(\text{{batch, height, width,
 
 An IDWT 2D layer operates on input tensors of shape $(\text{batch}, \text{height}/2, \text{width}/2, 4\times \text{channels})$ and produces an output of shape $(\text{{batch, height, width, channels}})$ as described in Algorithm 2b.
 
-**Algorithm 2b**
+***Algorithm 2b —***
 
 1.  Input $\boldsymbol{Q}^{(\text{{grouped}})}$ of shape  $(\text{batch}, \text{height}/2, \text{width}/2, 4\times\text{channels})$
-    
 2.  Ungroup the subbands to get $\boldsymbol{Q}$ of shape $(\text{{batch, height, width, channels}})$
-    
 3.  Generate synthesis matrix $\boldsymbol{S}$ using $\text{{height}}$ and $\text{{width}}$ of $\boldsymbol{Q}$.
-    
 4.  For each batched channel $\boldsymbol{q}_{c}\in\boldsymbol{Q}$ of shape $(\text{{batch, height, width}})$:  
     (omitting suffix $c$ in $\boldsymbol{q}$ below for simplicity of  notation)
-    
-    1.   Row-wise batch IDWT 1D: $\boldsymbol{S}\boldsymbol{q}_{021}^{T}:=\text{Einsum}\big(ij,bjk\rightarrow bik\big)$
-        
-    2.  Column wise batch IDWT 1D: $\boldsymbol{S}(\boldsymbol{S}\boldsymbol{q}_{021}^{T})_{021}^{T}:=\text{Einsum}\big(ij,bjk\rightarrow bik\big)$
-        
+	1.   Row-wise batch IDWT 1D: $\boldsymbol{S}\boldsymbol{q}_{021}^{T}:=\text{Einsum}\big(ij,bjk\rightarrow bik\big)$
+	2.   Column wise batch IDWT 1D: $\boldsymbol{S}(\boldsymbol{S}\boldsymbol{q}_{021}^{T})_{021}^{T}:=\text{Einsum}\big(ij,bjk\rightarrow bik\big)$
         or equivalently, a perfect reconstruction,
-        
         $$\boldsymbol{x}=\text{{IDWT}}\big(\boldsymbol{q}\big)\text{{ or, }}\boldsymbol{x}=\boldsymbol{S}(\boldsymbol{S}\boldsymbol{q}_{021}^{T})_{021}^{T}$$
-        
         where, $\boldsymbol{S}=\boldsymbol{A}^{T}$ for orthogonal   wavelets
-        
 5.  Layer output (perfect reconstruction): $\boldsymbol{X}:=\big(\boldsymbol{x}_{c}\big)_{\forall c}$ is of  shape $(\text{{batch, height, width, channels}})$
-
-
 
 ![DWT decomposition and perfect reconstruction of a tensor , where  is DWT 2D layer and  is IDWT 2D layer.\label{fig:2DDWTlayer}](figs/DWT2DIDWT2D_PRlayer.jpg){ width=50% }
 
@@ -301,29 +264,19 @@ where, $\boldsymbol{A}$ and $\boldsymbol{S}$ are the same analysis and synthesis
 
 A DWT 3D layer operates on input tensors of shape $(\text{{batch, height, width, depth, channels}})$ and produces an output of shape $(\text{batch}, \text{height}/2, \text{width}/2, \text{depth}/2, 8\times \text{channels})$ as described in Algorithm 3a.
 
-**Algorithm 3a**
+***Algorithm 3a —***
 
 1.  Input $\boldsymbol{X}$ of shape  (batch, height, width, depth, channels).
-    
 2.  Generate analysis matrix $\boldsymbol{A}$ using $\text{{height}}$,  $\text{{width}}$ and $\text{{depth}}$of input.
-    
 3.  For each batched channel $\boldsymbol{x}_{c}\in\boldsymbol{X}$ of shape $(\text{{batch, height, width, depth}})$:  
     (omitting suffix $c$ in $\boldsymbol{x}$ below for simplicity of notation)
-    
-    1.  Row-wise batch DWT 1D:   $\boldsymbol{A}\boldsymbol{x}_{0213}^{T}:=\text{{Einsum}}\big(ij,bjkl\rightarrow bikl\big)$
-        
-    2.  Column-wise batch DWT 1D: $\boldsymbol{A}\left(\boldsymbol{A}\boldsymbol{x}_{0213}^{T}\right)_{0213}^{T}:=\text{{Einsum}}\big(ij,bjkl\rightarrow bikl\big)$
-        
-    3.  Depth-wise batch IDWT 1D: $\boldsymbol{A}(\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{0213}^{T})_{0213}^{T})_{0132}^{T}:=\text{{Einsum}}\big(ik,bjkl\rightarrow bjil\big)$
-        
-        Therefore, DWT of $\boldsymbol{x}$ yield coefficients:
-        $$\boldsymbol{q}_{c}:=\text{{DWT}}\left(\boldsymbol{x}\right)=\left[\boldsymbol{A}(\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{0213}^{T})_{0213}^{T})_{0132}^{T}\right]{}_{0132}^{T}$$
-        
+	1.  Row-wise batch DWT 1D:   $\boldsymbol{A}\boldsymbol{x}_{0213}^{T}:=\text{{Einsum}}\big(ij,bjkl\rightarrow bikl\big)$
+	2.  Column-wise batch DWT 1D: $\boldsymbol{A}\left(\boldsymbol{A}\boldsymbol{x}_{0213}^{T}\right)_{0213}^{T}:=\text{{Einsum}}\big(ij,bjkl\rightarrow bikl\big)$
+	3.  Depth-wise batch IDWT 1D: $\boldsymbol{A}(\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{0213}^{T})_{0213}^{T})_{0132}^{T}:=\text{{Einsum}}\big(ik,bjkl\rightarrow bjil\big)$
+        Therefore, DWT of $\boldsymbol{x}$ yield coefficients: $$\boldsymbol{q}_{c}:=\text{{DWT}}\left(\boldsymbol{x}\right)=\left[\boldsymbol{A}(\boldsymbol{A}(\boldsymbol{A}\boldsymbol{x}_{0213}^{T})_{0213}^{T})_{0132}^{T}\right]{}_{0132}^{T}$$
 4.  Stacking for all $c$ channels as $\boldsymbol{Q}:=\big(\boldsymbol{q}_{c}\big)_{\forall c}$ to a shape (batch, height, width, depth, channels).
-    
 5.  Group subbands and return an output $\boldsymbol{Q}^{(\text{{grouped}})}$ of shape (batch, height$/2$, width$/2$, depth$/2$, $8\times$channels).  
-	  
-
+  
 	```python
 		# Grouping Eight subbands in 3D DWT
         mid = int(Q.shape[2]/2)
@@ -338,43 +291,29 @@ A DWT 3D layer operates on input tensors of shape $(\text{{batch, height, width,
 		output = Concatenate([LLL, LLH, LHL, LHH, HLL, HLH, HHL, HHH], axis=-1)
 	```
 
-
-
 ### 4.2.2 IDWT 3D layer
 
 An IDWT 3D layer operates on input tensors of shape $(\text{batch}, \text{height}/2, \text{width}/2, \text{depth}/2, 8\times \text{channels})$ and produces an output of shape $(\text{{batch, height, width, depth, channels}})$ as described in Algorithm 3b.
 
-* * *
-
-**Algorithm 3b**
+***Algorithm 3b —***
 
 1.  Input $\boldsymbol{Q}^{(\text{{grouped}})}$ of shape $(\text{batch}, \text{height}/2, \text{width}/2, \text{depth}/2, 8\times\text{channels})$
-    
 2.  Ungroup to get $\boldsymbol{Q}$ of shape $(\text{{batch, height, width, depth, channels}})$
-    
 3.  Generate synthesis matrix $\boldsymbol{S}$ using $\text{{height}}$,  $\text{{width}}$ and $\text{{depth}}$ of $\boldsymbol{Q}$.
-    
 4.  For each batched channel $\boldsymbol{q}_{c}\in\boldsymbol{Q}$ of shape $(\text{{batch, height, width, depth}})$:  
     (omitting suffix $c$ in $\boldsymbol{q}$ below for simplicity of  notation)
-    
-    1.  Row-wise batch IDWT 1D: $\boldsymbol{S}\boldsymbol{q}_{0132}^{T}:=\text{{Einsum}}\big(ik,bjkl\rightarrow bjil\big)$
-        
-    2.  Column-wise batch IDWT 1D: $\boldsymbol{S} (\boldsymbol{S}\boldsymbol{q}_{0132}^{T})_{0132}:=\text{{Einsum}}\big(ij,bjkl\rightarrow bikl\big)$
-        
-    3.  Depth-wise batch IDWT 1D: $\boldsymbol{S}(\boldsymbol{S}(\boldsymbol{S}\boldsymbol{q}_{0132}^{T})_{0132}^{T})_{0213}^{T}:=\text{{Einsum}}\big(ij,bjkl\rightarrow bikl\big)$
-        
-        or equivalently, a perfect reconstruction,
-        
+	1.  Row-wise batch IDWT 1D: $\boldsymbol{S}\boldsymbol{q}_{0132}^{T}:=\text{{Einsum}}\big(ik,bjkl\rightarrow bjil\big)$
+	2.  Column-wise batch IDWT 1D: $\boldsymbol{S} (\boldsymbol{S}\boldsymbol{q}_{0132}^{T})_{0132}:=\text{{Einsum}}\big(ij,bjkl\rightarrow bikl\big)$
+	3.  Depth-wise batch IDWT 1D: $\boldsymbol{S}(\boldsymbol{S}(\boldsymbol{S}\boldsymbol{q}_{0132}^{T})_{0132}^{T})_{0213}^{T}:=\text{{Einsum}}\big(ij,bjkl\rightarrow bikl\big)$
+        or equivalently, a perfect reconstruction,        
         $$\boldsymbol{x}_{c}:=\text{{IDWT}}\left(\boldsymbol{q}\right)=\left[\boldsymbol{S}(\boldsymbol{S}(\boldsymbol{S}\boldsymbol{q}_{0132}^{T})_{0132}^{T})_{0213}^{T}\right]_{0213}^{T}$$
-        
         where, $\boldsymbol{S}=\boldsymbol{A}^{T}$ for orthogonal wavelets.
-        
 5.  Layer output (perfect reconstruction): $\boldsymbol{X}:=\big(\boldsymbol{x}_{c}\big)_{\forall c}$ is of  shape $(\text{{batch, height, width, depth, channels}})$
     
 
 
 
-* * *
+<br><br>
 
 In general, a seamless realization of fast $\text{D}$\-dimensional DWT and IDWT is possible by extending the above separable method to all the independent $N$ axes one after the other. The number of subbands will be equal to $2^{\text{{D}}}$ for a $\text{{D}}$ dimensional DWT. For example, sequences $(\text{{D}}=1)$ yield two subbands, images $(\text{{D}}=2)$ yield four subbands, three-dimensional inputs $(\text{{D}}=3)$ with voxels yield eight subbands etc.
 
@@ -382,7 +321,7 @@ In general, a seamless realization of fast $\text{D}$\-dimensional DWT and IDWT 
 
 The above-discussed DWT and IDWT layers are building blocks in constructing multilevel DWT filter banks. \autoref{fig:MultilevelDWTtiling} shows the partitioning of the 1D frequency axis and tiling of the 2D frequency plane using a level-4 1D and 2D DWT. The multilevel DWT successively decomposes the low-frequency feature. If the high-frequency features are also decomposed successively, then we get a Wavelet Packet Transform (WPT) filter bank.
 
-![Spatial-frequency tiling by DWT level 4 decomposition of a sequence of length N (top) and image of shape Nimes N (bottom).\label{fig:MultilevelDWTtiling}](figs/SpatialFrequencyTilingLv4.jpg){ width=90% }
+![Spatial-frequency tiling by DWT level 4 decomposition of a sequence of length N (top) and image of shape Nimes N (bottom).\label{fig:MultilevelDWTtiling}](figs/SpatialFrequencyTilingLv4.jpg){ width=80% }
 
 
 # References
