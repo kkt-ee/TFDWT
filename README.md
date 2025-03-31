@@ -59,7 +59,7 @@ pip install .
 
 * * *
 
-## Test and verify installations
+## Verify installation
 
 ### Compute $\text{DWT}$ $1\text{D}$ and $\text{IDWT}$ $1\text{D}$ of batched, multichannel $x$ of shape $(\text{batch, length, channels})$
 
