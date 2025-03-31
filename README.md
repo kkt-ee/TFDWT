@@ -3,9 +3,10 @@
 [![PyPI Version](https://img.shields.io/pypi/v/TFDWT?label=PyPI)](https://pypi.org/project/TFDWT/) 
 [![PyPI Version](https://img.shields.io/pypi/pyversions/TFDWT)](https://pypi.org/project/TFDWT/)
 [![TensorFlow Version](https://img.shields.io/badge/tensorflow-2.18.0-orange)](https://www.tensorflow.org/)
-[![Keras Version](https://img.shields.io/badge/keras-3.6.0-red)](https://keras.io/)
+[![Keras Version](https://img.shields.io/badge/keras-3.6.0-darkred)](https://keras.io/)
 [![CUDA Version](https://img.shields.io/badge/cuda-12.5.1-green)](https://developer.nvidia.com/cuda-toolkit)
 [![NumPy Version](https://img.shields.io/badge/numpy-2.0.2-purple)](https://numpy.org/)
+
 
 Fast $1\text{D}$, $2\text{D}$ and $3\text{D}$ Discrete Wavelet Transform ($\text{DWT}$) and Inverse Discrete Wavelet Transform ($\text{IDWT}$) layers for backpropagation networks.
 
