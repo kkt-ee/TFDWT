@@ -1,6 +1,6 @@
 # TFDWT: Fast Discrete Wavelet Transform TensorFlow Layers
 
-Fast $1\text{D}$ and $2\text{D}$ Discrete Wavelet Transform ($\text{DWT}$) and Inverse Discrete Wavelet Transform ($\text{IDWT}$)
+Fast $1\text{D}$, $2\text{D}$ and $3\text{D}$ Discrete Wavelet Transform ($\text{DWT}$) and Inverse Discrete Wavelet Transform ($\text{IDWT}$) layers for backpropagation networks.
 
 **Available wavelet families ―**
 
