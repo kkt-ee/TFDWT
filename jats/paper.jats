@@ -107,12 +107,17 @@ a Creative Commons Attribution 4.0 International License (CC BY
   models. The Wavelet toolbox
   (<xref alt="Misiti et al., 1996" rid="ref-misiti1996wavelet" ref-type="bibr">Misiti
   et al., 1996</xref>) by MathWorks is a proprietary software that has
-  served the requirements for D-dimensional wavelet transforms in the
-  MATLAB environment for a few decades. Several open-source packages are
-  now available for 1D and 2D DWT in Python. Pywavelets
+  served the requirements for <inline-formula><alternatives>
+  <tex-math><![CDATA[\text{D}]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mtext mathvariant="normal">D</mml:mtext></mml:math></alternatives></inline-formula>-dimensional
+  wavelet transforms in the MATLAB environment for a few decades.
+  Several open-source packages are now available for 1D and 2D DWT in
+  Python. Pywavelets
   (<xref alt="Lee et al., 2019" rid="ref-lee2019pywavelets" ref-type="bibr">Lee
-  et al., 2019</xref>) is a D-dimensional wavelet transform library in
-  Python that works with Numpy
+  et al., 2019</xref>) is a <inline-formula><alternatives>
+  <tex-math><![CDATA[\text{D}]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mtext mathvariant="normal">D</mml:mtext></mml:math></alternatives></inline-formula>-dimensional
+  wavelet transform library in Python that works with Numpy
   (<xref alt="Harris et al., 2020" rid="ref-harris2020array" ref-type="bibr">Harris
   et al., 2020</xref>) arrays. However, it is challenging to directly
   use Pywavelets with the symbolic tensors in TensorFlow
@@ -132,9 +137,9 @@ a Creative Commons Attribution 4.0 International License (CC BY
   et al., 2021</xref>), the pytorch-wavelets
   (<xref alt="Cotter, 2023" rid="ref-pytorch-wavelets-1.3.0" ref-type="bibr">Cotter,
   2023</xref>) package allows the construction of 1D and 2D DWT layers.
-  However, there are limited libraries for 3D and higher transforms with
-  a wide range of wavelet families for Graphics Processing Unit (GPU)
-  computations.</p>
+  However, there are limited libraries for 3D and higher dimensional
+  transforms with a wide range of wavelet families for Graphics
+  Processing Unit (GPU) computations.</p>
   <p>For a <inline-formula><alternatives>
   <tex-math><![CDATA[\text{{D}}]]></tex-math>
   <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mtext mathvariant="normal">D</mml:mtext></mml:math></alternatives></inline-formula>-dimensional
@@ -142,12 +147,9 @@ a Creative Commons Attribution 4.0 International License (CC BY
   <tex-math><![CDATA[\boldsymbol{\psi} \in L^{2}(\mathbb{R})^{\text{{D}}}]]></tex-math>
   <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝛙</mml:mi><mml:mo>∈</mml:mo><mml:msup><mml:mi>L</mml:mi><mml:mn>2</mml:mn></mml:msup><mml:msup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>ℝ</mml:mi><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mtext mathvariant="normal">D</mml:mtext></mml:msup></mml:mrow></mml:math></alternatives></inline-formula>,
   a discrete wavelet system defined by <inline-formula><alternatives>
-  <tex-math><![CDATA[\big\{\boldsymbol{\psi}_{m,\boldsymbol{p}}:m\in\mathbb{Z},\boldsymbol{p}\in\mathbb{Z}^{\text{{D}}}\big\}]]></tex-math>
-  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">{</mml:mo><mml:msub><mml:mi>𝛙</mml:mi><mml:mrow><mml:mi>m</mml:mi><mml:mo>,</mml:mo><mml:mi>𝐩</mml:mi></mml:mrow></mml:msub><mml:mo>:</mml:mo><mml:mi>m</mml:mi><mml:mo>∈</mml:mo><mml:mi>ℤ</mml:mi><mml:mo>,</mml:mo><mml:mi>𝐩</mml:mi><mml:mo>∈</mml:mo><mml:msup><mml:mi>ℤ</mml:mi><mml:mtext mathvariant="normal">D</mml:mtext></mml:msup><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">}</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
-  forms an orthonormal basis in <inline-formula><alternatives>
-  <tex-math><![CDATA[\boldsymbol{\psi}\in L^{2}(\mathbb{R})^{\text{{D}}}]]></tex-math>
-  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝛙</mml:mi><mml:mo>∈</mml:mo><mml:msup><mml:mi>L</mml:mi><mml:mn>2</mml:mn></mml:msup><mml:msup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>ℝ</mml:mi><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mtext mathvariant="normal">D</mml:mtext></mml:msup></mml:mrow></mml:math></alternatives></inline-formula>,
-  where <inline-formula><alternatives>
+  <tex-math><![CDATA[\big\{\boldsymbol{\psi}_{m,\boldsymbol{p}}:m\in\mathbb{Z},\boldsymbol{p}\in\mathbb{Z}^{\text{{D}}},\text{D}\in\mathbb{N}\big\}]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">{</mml:mo><mml:msub><mml:mi>𝛙</mml:mi><mml:mrow><mml:mi>m</mml:mi><mml:mo>,</mml:mo><mml:mi>𝐩</mml:mi></mml:mrow></mml:msub><mml:mo>:</mml:mo><mml:mi>m</mml:mi><mml:mo>∈</mml:mo><mml:mi>ℤ</mml:mi><mml:mo>,</mml:mo><mml:mi>𝐩</mml:mi><mml:mo>∈</mml:mo><mml:msup><mml:mi>ℤ</mml:mi><mml:mtext mathvariant="normal">D</mml:mtext></mml:msup><mml:mo>,</mml:mo><mml:mtext mathvariant="normal">D</mml:mtext><mml:mo>∈</mml:mo><mml:mi>ℕ</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">}</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
+  forms an orthonormal basis, where <inline-formula><alternatives>
   <tex-math><![CDATA[\boldsymbol{\psi}_{m,\boldsymbol{p}}(\boldsymbol{x}):=2^{m}\psi(2^{m}\boldsymbol{x}-\boldsymbol{p})]]></tex-math>
   <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>𝛙</mml:mi><mml:mrow><mml:mi>m</mml:mi><mml:mo>,</mml:mo><mml:mi>𝐩</mml:mi></mml:mrow></mml:msub><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐱</mml:mi><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mo>:=</mml:mo><mml:msup><mml:mn>2</mml:mn><mml:mi>m</mml:mi></mml:msup><mml:mi>ψ</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msup><mml:mn>2</mml:mn><mml:mi>m</mml:mi></mml:msup><mml:mi>𝐱</mml:mi><mml:mo>−</mml:mo><mml:mi>𝐩</mml:mi><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:mrow></mml:math></alternatives></inline-formula>.
   Then, by definition the DWT of <inline-formula><alternatives>
@@ -167,27 +169,33 @@ a Creative Commons Attribution 4.0 International License (CC BY
   allow computation with symbolic tensors and CUDA. This release
   supports up to 3D forward and inverse transforms with various
   orthogonal and biorthogonal wavelet families. A seamless package
-  upgrade for higher dimensional DWT is possible by separable
-  transforms. The boundary effects are taken care of with cyclic
-  convolutions instead of padding. The package supports orthogonal and
-  biorthogonal wavelets of different families having impulse responses
-  of diverse lengths. In this paper, we defined the
-  platform-independent, underlying mathematics for realizing fast DWT
-  and IDWT layers with filter bank structures having FIR filters,
+  upgrade for higher dimensional DWT is possible by separable transforms
+  of the independent axes. The boundary effects are taken care of with
+  cyclic convolutions instead of padding. The package supports
+  orthogonal and biorthogonal wavelets of different families having
+  impulse responses of diverse lengths. In this paper, we defined the
+  platform-independent, underlying mathematics for realizing fast
+  <inline-formula><alternatives>
+  <tex-math><![CDATA[\text{D}]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mtext mathvariant="normal">D</mml:mtext></mml:math></alternatives></inline-formula>-dimensional
+  DWT and IDWT layers with filter bank structures having FIR filters,
   downsamplers and upsamplers. Although our realization of the discrete
   wavelet system is in TensorFlow 2, a seamless reproduction of the
   computations is possible in other deep learning frameworks.</p>
 </sec>
 <sec id="discrete-wavelet-system-for-sequences">
   <title>3 Discrete wavelet system for sequences</title>
-  <p>A discrete wavelet system has a lowpass scaling function and a
-  highpass wavelet. The realization of a discrete wavelet system with a
-  continuous one-dimensional (D=1) mother wavelet
-  <inline-formula><alternatives>
+  <p>A discrete wavelet system contains a pair of quadrature mirror
+  filters with a lowpass scaling function and a highpass mother wavelet.
+  A discrete wavelet system with a continuous one-dimensional
+  (<inline-formula><alternatives>
+  <tex-math><![CDATA[\text{D}=1]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mtext mathvariant="normal">D</mml:mtext><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:math></alternatives></inline-formula>)
+  mother wavelet <inline-formula><alternatives>
   <tex-math><![CDATA[\psi\in L^{2}(\mathbb{R})]]></tex-math>
   <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>ψ</mml:mi><mml:mo>∈</mml:mo><mml:msup><mml:mi>L</mml:mi><mml:mn>2</mml:mn></mml:msup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>ℝ</mml:mi><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:mrow></mml:math></alternatives></inline-formula>
-  is by using the impulse responses of the scaling function and the
-  wavelet as Finite Impulse Response (FIR) filters
+  is realized by using the impulse responses of the scaling function and
+  the wavelet as Finite Impulse Response (FIR) filters
   <inline-formula><alternatives>
   <tex-math><![CDATA[g\big[n\big]]]></tex-math>
   <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>g</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">[</mml:mo><mml:mi>n</mml:mi><mml:mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">]</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
@@ -704,7 +712,7 @@ a Creative Commons Attribution 4.0 International License (CC BY
           <tex-math><![CDATA[\boldsymbol{x}]]></tex-math>
           <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐱</mml:mi></mml:math></alternatives></inline-formula>
           below for simplicity of notation)</p>
-          <list list-type="order">
+          <list list-type="alpha-lower">
             <list-item>
               <p>Row-wise batch DWT 1D: <inline-formula><alternatives>
               <tex-math><![CDATA[\boldsymbol{A}\boldsymbol{x}_{021}^{T}:=\text{Einsum} \big(ij,bjk \rightarrow bik \big)]]></tex-math>
@@ -819,7 +827,7 @@ a Creative Commons Attribution 4.0 International License (CC BY
           <tex-math><![CDATA[\boldsymbol{q}]]></tex-math>
           <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐪</mml:mi></mml:math></alternatives></inline-formula>
           below for simplicity of notation)</p>
-          <list list-type="order">
+          <list list-type="alpha-lower">
             <list-item>
               <p>Row-wise batch IDWT 1D: <inline-formula><alternatives>
               <tex-math><![CDATA[\boldsymbol{S}\boldsymbol{q}_{021}^{T}:=\text{Einsum}\big(ij,bjk\rightarrow bik\big)]]></tex-math>
@@ -940,7 +948,7 @@ a Creative Commons Attribution 4.0 International License (CC BY
           <tex-math><![CDATA[\boldsymbol{x}]]></tex-math>
           <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐱</mml:mi></mml:math></alternatives></inline-formula>
           below for simplicity of notation)</p>
-          <list list-type="order">
+          <list list-type="alpha-lower">
             <list-item>
               <p>Row-wise batch DWT 1D: <inline-formula><alternatives>
               <tex-math><![CDATA[\boldsymbol{A}\boldsymbol{x}_{0213}^{T}:=\text{{Einsum}}\big(ij,bjkl\rightarrow bikl\big)]]></tex-math>
@@ -1067,7 +1075,7 @@ a Creative Commons Attribution 4.0 International License (CC BY
           <tex-math><![CDATA[\boldsymbol{q}]]></tex-math>
           <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐪</mml:mi></mml:math></alternatives></inline-formula>
           below for simplicity of notation)</p>
-          <list list-type="order">
+          <list list-type="alpha-lower">
             <list-item>
               <p>Row-wise batch IDWT 1D: <inline-formula><alternatives>
               <tex-math><![CDATA[\boldsymbol{S}\boldsymbol{q}_{0132}^{T}:=\text{{Einsum}}\big(ik,bjkl\rightarrow bjil\big)]]></tex-math>
