@@ -83,6 +83,19 @@ x_hat = IDWT2D(wave=wave)(LLLHHLHH) # Synthesis
 
 ```
 
+ <br/><br/>
+
+ ### Compute $\text{DWT}$ $3\text{D}$ and $\text{IDWT}$ $3\text{D}$ of batched, multichannel $x$ of shape $(\text{batch, height, width, depth, channels})$
+
+```python
+"""Perfect Reconstruction 3D DWT level-1 Filter bank"""
+from TFDWT.DWTIDWT3Dv1 import DWT3D, IDWT3D
+
+LLLLLHLHLLHHHLLHLHHHLHHH = DWT3D(wave=wave)(x)      # Analysis
+x_hat = IDWT3D(wave=wave)(LLLLLHLHLLHHHLLHLHHHLHHH) # Synthesis
+
+```
+
  <br/><br/><br/>
 
 **NOTE ―** Using the above forward and inverse transforms the above $\text{DWT}$ and $\text{IDWT}$ layers can be used to construct multilevel $\text{DWT}$ filter banks and $\text{Wave Packet}$ filter banks.
