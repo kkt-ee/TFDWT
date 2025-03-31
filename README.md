@@ -13,7 +13,8 @@ Fast $1\text{D}$ and $2\text{D}$ Discrete Wavelet Transform ($\text{DWT}$) and I
         Reverse biorthogonal (rbio)
 ```
 
-***Note ―*** *Permissible input shapes are in powers or $2^m$ where $m$ is a Natural number. Additionally, for 2D and 3D transforms, the shape of the input must be square and cube.*
+
+**Note ―** The permissible input shapes are $2^m$ where $m$ is a Natural number. Additionally, for 2D and 3D transforms, the shape of the input must be square and cube.
 
   
 <br/><br/><br/>
