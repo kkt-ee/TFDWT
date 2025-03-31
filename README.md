@@ -121,7 +121,7 @@ x_hat = IDWT3D(wave=wave)(LLLLLHLHLLHHHLLHLHHHLHHH) # Synthesis
 
 <br/><br/>
 
-***The installation of the TFDWT package is recommended inside a virtual environment with tensorflow[GPU] installed at first***
+*The installation of the TFDWT package is recommended inside a virtual environment with tensorflow[GPU] installed at first*
 
 <br/><br/><br/>
 
