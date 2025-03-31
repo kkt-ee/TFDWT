@@ -117,7 +117,7 @@ $$
 Similarly,
 
 $$
-\text{{Synthesis matrix is }}\boldsymbol{S}	={\small {\left[\begin{array}{cccccccc}
+\boldsymbol{S}	={\small {\left[\begin{array}{cccccccc}
 \tilde{g}_{1} & \tilde{g}_{0} & 0 & 0 & \tilde{g}_{5} & \tilde{g}_{4} & \tilde{g}_{3} & \tilde{g}_{2}\\
 \tilde{g}_{3} & \tilde{g}_{2} & \tilde{g}_{1} & \tilde{g}_{0} & 0 & 0 & \tilde{g}_{5} & \tilde{g}_{4}\\
 \tilde{g}_{5} & \tilde{g}_{4} & \tilde{g}_{3} & \tilde{g}_{2} & \tilde{g}_{1} & \tilde{g}_{0} & 0 & 0\\
