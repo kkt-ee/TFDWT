@@ -14,20 +14,15 @@ authors:
 
    - name: Kishore K. Tarafdar  
      orcid: 0009-0001-4548-7639  
-     <!-- equal-contrib: true   -->
-     <!-- affiliation: 1 -->
 
    - name: Vikram M. Gadre  
      orcid: 0000-0001-8439-5625  
      corresponding: true
-     <!-- equal-contrib: true   -->
-     <!-- affiliation: 1 -->
-
+     
 affiliations:
 
 - name: Department of Electrical Engineering, Indian Institute of Technology Bombay, India
-    <!-- index: 1 -->
-
+    
 date: 1 April 2025  
 
 bibliography: paper.bib
