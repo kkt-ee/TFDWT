@@ -5,4 +5,4 @@
 # twine check dist/*
 
 ## Upload to PyPi
-# python -m twine upload --repository pypi --config-file .pypirc dist/*
+python -m twine upload --repository pypi --config-file .pypirc dist/*
