@@ -84,7 +84,7 @@ where \\boldsymbol{A} and \\boldsymbol{S} are analysis and synthesis matrices as
 **Example 1.** Given, a sequence $\boldsymbol{x}\in\mathbb{R}^{8}$ or $N=8$ and FIR filters length $L=6$.
 
 $$
-\text{{\text{{LPF and downsampling }}}}f_{(\downarrow2)}\boldsymbol{G}	={\small {\left[\begin{array}{cccccccc}
+\text{{LPF and downsampling }}f_{(\downarrow2)}\boldsymbol{G}	={\small {\left[\begin{array}{cccccccc}
 g_{1} & g_{0} & 0 & 0 & g_{5} & g_{4} & g_{3} & g_{2}\\
 g_{3} & g_{2} & g_{1} & g_{0} & 0 & 0 & g_{5} & g_{4}\\
 g_{5} & g_{4} & g_{3} & g_{2} & g_{1} & g_{0} & 0 & 0\\
