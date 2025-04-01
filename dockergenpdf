@@ -1,1 +1,8 @@
-sudo docker run --rm     --volume /home/kkt/src/TFDWT.pypi:/data     --user 1005:1005     --env JOURNAL=joss     openjournals/inara
+#sudo docker run --rm     --volume /home/kkt/src/TFDWT.pypi:/data     --user 1005:1005     --env JOURNAL=joss     openjournals/inara
+
+
+sudo docker run --rm \
+    --volume $PWD/paper:/data \
+    --user $(id -u):$(id -g) \
+    --env JOURNAL=joss \
+    openjournals/inara
