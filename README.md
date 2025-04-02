@@ -150,7 +150,7 @@ x_hat = IDWT3D(wave=wave)(LLLLLHLHLLHHHLLHLHHHLHHH) # Synthesis
 
 ```txt
         Python 3.12.7
-        TensorFlow 2.16 to 2.19
+        TensorFlow 2.15 to 2.19
         Keras 3.6.0
         Numpy 2.0.2
         CUDA 12.5.1
