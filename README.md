@@ -39,11 +39,11 @@ Fast $1\text{D}$, $2\text{D}$ and $3\text{D}$ Discrete Wavelet Transform ($\text
 
   ```bash
   conda info --envs
-  env_name='tf218'
+  env_name='tf219'
   conda create -n $env_name python=3.12 ipykernel
 
   # activate virtual environment
-  conda activate tf218
+  conda activate tf219
   ```
 
   - Install TensorFlow using official guide in https://www.tensorflow.org/install/pip  
