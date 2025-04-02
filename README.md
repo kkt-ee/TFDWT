@@ -33,9 +33,32 @@ Fast $1\text{D}$, $2\text{D}$ and $3\text{D}$ Discrete Wavelet Transform ($\text
 
 *The installation of the TFDWT package is recommended inside a virtual environment with tensorflow[GPU] installed at first.*
 
+**Pre-installation checks**
+(Tested in Debian bookworm)
+  - Create a new **virtual enironment** with a specific **Python version**
+
+  ```bash
+  conda info --envs
+  env_name='tf218'
+  conda create -n $env_name python=3.12 ipykernel
+
+  # activate virtual environment
+  conda activate tf218
+  ```
+
+  - Install TensorFlow using official guide in https://www.tensorflow.org/install/pip  
+
+  ```bash
+  # For GPU users
+  pip install tensorflow[and-cuda]
+  # Verify setup
+  python3 -c "import tensorflow as tf; print(f'{tf.config.list_physical_devices('GPU')}, \nTF version {tf.__version__}')"
+  ```
+
+
 <br/>
 
-**Install from PyPI** (Option $1$)
+**Install TFDWT from PyPI** (Option $1$)
 
 ```bash
 pip install TFDWT
@@ -44,7 +67,7 @@ pip install TFDWT
   
 <br/><br/>
 
-**Install from Github** (Option $2$)
+**Install TFDWT from Github** (Option $2$)
 
 Download the package
 
