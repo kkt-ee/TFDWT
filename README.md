@@ -35,7 +35,7 @@ Fast $1\text{D}$, $2\text{D}$ and $3\text{D}$ Discrete Wavelet Transform ($\text
 
 **Pre-installation checks**
 (Tested in Gentoo and Debian bookworm)
-  - Create a new **virtual enironment** with a specific **Python version**
+  - Create a new **virtual enironment** with a specific **Python version** (Use the Python version supported by TensorFlow)
 
   ```bash
   conda info --envs
