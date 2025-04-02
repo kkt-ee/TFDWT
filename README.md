@@ -1,6 +1,6 @@
 # TFDWT: Fast Discrete Wavelet Transform TensorFlow Layers
 
-[![PyPI Version](https://img.shields.io/pypi/v/TFDWT?label=PyPI)](https://pypi.org/project/TFDWT/) 
+[![PyPI Version](https://img.shields.io/pypi/v/TFDWT?label=PyPI&color=gold)](https://pypi.org/project/TFDWT/) 
 [![PyPI Version](https://img.shields.io/pypi/pyversions/TFDWT)](https://pypi.org/project/TFDWT/)
 [![TensorFlow Version](https://img.shields.io/badge/tensorflow-2.15--2.19-darkorange)](https://www.tensorflow.org/)
 [![Keras Version](https://img.shields.io/badge/keras-3.6.0-darkred)](https://keras.io/)
