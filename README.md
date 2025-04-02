@@ -33,6 +33,8 @@ Fast $1\text{D}$, $2\text{D}$ and $3\text{D}$ Discrete Wavelet Transform ($\text
 
 *The installation of the ```TFDWT``` package is recommended inside a virtual environment with ```tensorflow[and-cuda]``` installed at first.*
 
+<br/>
+
 **Pre-installation checks**
 (Tested in Gentoo and Debian bookworm)
   - Create a new **virtual enironment** with a specific **Python version** (use the Python version supported by TensorFlow)
@@ -56,7 +58,7 @@ Fast $1\text{D}$, $2\text{D}$ and $3\text{D}$ Discrete Wavelet Transform ($\text
   ```
 
 
-<br/>
+<br/><br/>
 
 **Install TFDWT from PyPI** (Option $1$)
 
