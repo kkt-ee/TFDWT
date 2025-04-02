@@ -31,7 +31,7 @@ Fast $1\text{D}$, $2\text{D}$ and $3\text{D}$ Discrete Wavelet Transform ($\text
 
 ## Installation guide
 
-*The installation of the TFDWT package is recommended inside a virtual environment with ```tensorflow[and-cuda]``` installed at first.*
+*The installation of the ```TFDWT``` package is recommended inside a virtual environment with ```tensorflow[and-cuda]``` installed at first.*
 
 **Pre-installation checks**
 (Tested in Gentoo and Debian bookworm)
