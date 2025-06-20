@@ -8,6 +8,9 @@
 [![NumPy Version](https://img.shields.io/badge/numpy-2.0.2-blueviolet)](https://numpy.org/)
 [![MIT](https://img.shields.io/badge/license-GPLv3-deepgreen.svg?style=flat)](https://github.com/kkt-ee/TFDWT/LICENSE)
 
+[![arXiv](https://img.shields.io/badge/arXiv-1706.03762-b31b1b.svg)](https://doi.org/10.48550/arXiv.2504.04168)  
+**TFDWT: Fast Discrete Wavelet Transform TensorFlow Layers**
+
 Fast $1\text{D}$, $2\text{D}$ and $3\text{D}$ Discrete Wavelet Transform ($\text{DWT}$) and Inverse Discrete Wavelet Transform ($\text{IDWT}$) layers for backpropagation networks.
 
 **Available wavelet families ―**
@@ -23,6 +26,10 @@ Fast $1\text{D}$, $2\text{D}$ and $3\text{D}$ Discrete Wavelet Transform ($\text
 
 
 **Note ―** The permissible input shapes are $2^m$, where $m$ is a Natural number. Additionally, for 2D and 3D transforms, the shape of the input must be square and cube, i.e., equal sides.
+
+
+
+
 
   
 <br/><br/><br/>
@@ -102,7 +109,7 @@ pip install .
 
 ```python
 """Perfect Reconstruction 1D DWT level-1 Filter bank"""
-from TFDWT.DWTIDWT1Dv1 import DWT1D, IDWT1D
+from TFDWT.DWT1DFB import DWT1D, IDWT1D
 
 LH = DWT1D(wave='bior3.1')(x)       # Analysis
 x_hat = IDWT1D(wave='bior3.1')(LH)  # Synthesis
@@ -115,7 +122,7 @@ x_hat = IDWT1D(wave='bior3.1')(LH)  # Synthesis
 
 ```python
 """Perfect Reconstruction 2D DWT level-1 Filter bank"""
-from TFDWT.DWTIDWT2Dv1 import DWT2D, IDWT2D
+from TFDWT.DWT2DFB import DWT2D, IDWT2D
 
 LLLHHLHH = DWT2D(wave=wave)(x)      # Analysis
 x_hat = IDWT2D(wave=wave)(LLLHHLHH) # Synthesis
@@ -128,7 +135,7 @@ x_hat = IDWT2D(wave=wave)(LLLHHLHH) # Synthesis
 
 ```python
 """Perfect Reconstruction 3D DWT level-1 Filter bank"""
-from TFDWT.DWTIDWT3Dv1 import DWT3D, IDWT3D
+from TFDWT.DWT3DFB import DWT3D, IDWT3D
 
 LLLLLHLHLLHHHLLHLHHHLHHH = DWT3D(wave=wave)(x)      # Analysis
 x_hat = IDWT3D(wave=wave)(LLLLLHLHLLHHHLLHLHHHLHHH) # Synthesis
@@ -174,4 +181,4 @@ pip uninstall TFDWT
 
 * * *
 
-***TFDWT (C) 2025 Kishore Kumar Tarafdar, Prime Minister's Research Fellow, EE, IIT Bombay, भारत*** 🇮🇳
+***TFDWT (C) 2025 Kishore Kumar Tarafdar, भारत*** 🇮🇳
