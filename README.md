@@ -8,8 +8,9 @@
 [![NumPy Version](https://img.shields.io/badge/numpy-2.0.2-blueviolet)](https://numpy.org/)
 [![MIT](https://img.shields.io/badge/license-GPLv3-deepgreen.svg?style=flat)](https://github.com/kkt-ee/TFDWT/LICENSE)
 
-[![arXiv](https://img.shields.io/badge/arXiv-1706.03762-b31b1b.svg)](https://doi.org/10.48550/arXiv.2504.04168)  
-**TFDWT: Fast Discrete Wavelet Transform TensorFlow Layers**
+
+
+**TFDWT: Fast Discrete Wavelet Transform TensorFlow Layers** [![arXiv](https://img.shields.io/badge/arXiv-1706.03762-b31b1b.svg)](https://doi.org/10.48550/arXiv.2504.04168)
 
 Fast $1\text{D}$, $2\text{D}$ and $3\text{D}$ Discrete Wavelet Transform ($\text{DWT}$) and Inverse Discrete Wavelet Transform ($\text{IDWT}$) layers for backpropagation networks.
 
