@@ -1,4 +1,4 @@
-# TFDWT: Fast Discrete Wavelet Transform TensorFlow Layers [![arXiv](https://img.shields.io/badge/arXiv-1706.03762-b31b1b.svg)]
+# TFDWT: Fast Discrete Wavelet Transform TensorFlow Layers ![arXiv](https://img.shields.io/badge/arXiv-1706.03762-b31b1b.svg)
 
 [![PyPI Version](https://img.shields.io/pypi/v/TFDWT?label=PyPI&color=gold)](https://pypi.org/project/TFDWT/) 
 [![PyPI Version](https://img.shields.io/pypi/pyversions/TFDWT)](https://pypi.org/project/TFDWT/)
