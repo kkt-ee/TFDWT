@@ -1,7 +1,8 @@
 import tensorflow as tf
 import keras
 from TFDWT.DWTFilters import FetchAnalysisSynthesisFilters
-from TFDWT.dwt_operator import make_dwt_operator_matrix_A
+from TFDWT.dwt_op import make_dwt_operator_matrix_A
+# from TFDWT.DWTop import DWTop
 
 @keras.saving.register_keras_serializable()
 class DWT2D(tf.keras.layers.Layer):
@@ -30,19 +31,30 @@ class DWT2D(tf.keras.layers.Layer):
         self.wave = wave
         self.clean = clean
         w = FetchAnalysisSynthesisFilters(wave)
-        self.h0, self.h1 = w.analysis()
+        h0, h1 = w.analysis()
+        self.h0 = tf.convert_to_tensor(h0, dtype=tf.float32)
+        self.h1 = tf.convert_to_tensor(h1, dtype=tf.float32)
+
         # g0, g1 = w.synthesis()
-        self.L = len(self.h0)
+        # self.L = len(self.h0)
+        # self.L = self.h0
+        self.L = self.h0.shape[0]
+        # self.A = None  # Will be a tf.Variable 
 
     def build(self, input_shape):
         self.num_channels = input_shape[-1]
         self.N = input_shape[1]
         A = make_dwt_operator_matrix_A(self.h0,self.h1,self.N)
-        # self.A = tf.transpose(self.A, perm=[1,0])
         self.A = tf.cast(A, tf.float32)  # (N, N)
+        super().build(input_shape)
        
-    def call(self, inputs):
-        # inputs: (batch, N, N, channels)
+    def call(self, inputs): 
+        # Compute or cache A on first call.
+        # if self.A is None:
+        #     # Use tf.Variable to store A so it lives in the layer's scope.
+        # A = make_dwt_operator_matrix_A(self.h0, self.h1, self.N)
+        # self.A = tf.Variable(A, trainable=False, dtype=tf.float32, name="dwt_operator_A")
+        # # inputs: (batch, N, N, channels)
         
         # Step 1: Transpose for each channel (swap axes 1 and 2)
         x = tf.transpose(inputs, [0, 2, 1, 3])  # (batch, N, N, channels)
@@ -128,8 +140,10 @@ class IDWT2D(tf.keras.layers.Layer):
         # self.N = int(input_shape[1])
         if self.clean: self.N = int(input_shape[1]*2)
         else: self.N = int(input_shape[1])
-        A = tf.cast(make_dwt_operator_matrix_A(self.h0,self.h1,self.N), tf.float32)
+        A = make_dwt_operator_matrix_A(self.h0,self.h1,self.N)
+        # A = DWTop(self.h0,self.h1,self.N).A
         self.S = tf.cast(tf.transpose(A), tf.float32)  # (N, N)
+        super().build(input_shape)
 
     def call(self, inputs):
         # inputs: (batch, N, N, channels)

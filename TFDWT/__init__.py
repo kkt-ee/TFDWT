@@ -24,7 +24,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>."""
 
 # from TFDWT.dbFBimpulseResponse import FBimpulseResponses
 # from TFDWT.DWTFilters import FetchAnalysisSynthesisFilters
-# from TFDWT.dwt_operator import make_dwt_operator_matrix_A
+# from TFDWT.DWTop import DWTop 
+## from TFDWT.dwt_operator import make_dwt_operator_matrix_A #deprecated
+
 
 # from TFDWT.DWT1DFB import DWT1D, IDWT1D
 # from TFDWT.DWT2DFB import DWT2D, IDWT2D
@@ -34,4 +36,4 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>."""
 
 
 
-__version__="0.0.3"
+__version__="0.0.4"

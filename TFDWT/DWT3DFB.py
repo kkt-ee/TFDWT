@@ -1,7 +1,8 @@
 import tensorflow as tf
 import keras
 from TFDWT.DWTFilters import FetchAnalysisSynthesisFilters
-from TFDWT.dwt_operator import make_dwt_operator_matrix_A
+from TFDWT.dwt_op import make_dwt_operator_matrix_A
+# from TFDWT.DWTop import DWTop
 
 @keras.saving.register_keras_serializable()
 class DWT3D(tf.keras.layers.Layer):
@@ -40,7 +41,9 @@ class DWT3D(tf.keras.layers.Layer):
         self.num_channels = input_shape[-1]
         self.N = input_shape[1]
         A = make_dwt_operator_matrix_A(self.h0,self.h1,self.N)
+        # A = DWTop(self.h0,self.h1,self.N).A
         self.A = tf.cast(A, tf.float32) 
+        super().build(input_shape)
 
     def call(self, inputs):
         # Inputs: (batch, row, col, depth, channel)
@@ -132,7 +135,9 @@ class IDWT3D(tf.keras.layers.Layer):
         if self.clean: self.N = int(input_shape[1]*2)
         else: self.N = int(input_shape[1])
         A = make_dwt_operator_matrix_A(self.h0,self.h1,self.N)
+        # A = DWTop(self.h0,self.h1,self.N).A
         self.S = tf.cast(tf.transpose(A), tf.float32)  # (N, N)
+        super().build(input_shape)
     
     def call(self, inputs):
         # Inputs: (batch, row, col, depth, channel)
