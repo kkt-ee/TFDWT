@@ -1,44 +1,37 @@
 import tensorflow as tf
 import keras
-from TFDWT.DWTFilters import FetchAnalysisSynthesisFilters
+from DWTFBlayout import DWTNDlayout, IDWTNDlayout
+# from TFDWT.DWTFilters import FetchAnalysisSynthesisFilters
 from TFDWT.dwt_op import make_dwt_operator_matrix_A
 # from TFDWT.DWTop import DWTop
 
 @keras.saving.register_keras_serializable()
-class DWT3D(tf.keras.layers.Layer):
-    """TFDWT: Fast Discrete Wavelet Transform TensorFlow Layers.
-    Copyright (C) 2025 Kishore Kumar Tarafdar
+class DWT3D(DWTNDlayout):
+    """ TFDWT: Fast Discrete Wavelet Transform TensorFlow Layers.
+        Copyright (C) 2025 Kishore Kumar Tarafdar
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+        This program is free software: you can redistribute it and/or modify
+        it under the terms of the GNU General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-    
+        You should have received a copy of the GNU General Public License
+        along with this program.  If not, see <https://www.gnu.org/licenses/>.
+        
     Note: if clean==True  then I/O (batch, N, N, N, channels) -> (batch, N/2, N/2, N/2, channels*8)
           if clean==False then I/O (batch, N, N, N, channels) -> (batch, N, N, N, channels)
-
     
-    DWT3D layer  --kkt@20Jun2024"""
-    
+    DWT3D layer  --kkt@4Jul2024"""
     def __init__(self, wave='haar', clean=True, **kwargs):
-        super().__init__(**kwargs)
-        self.wave = wave
-        self.clean = clean
-        w = FetchAnalysisSynthesisFilters(wave)
-        self.h0, self.h1 = w.analysis()
-        self.L = len(self.h0)
-        
+        super().__init__(wave=wave, clean=clean, **kwargs)
 
     def build(self, input_shape):
-        self.num_channels = input_shape[-1]
+        # self.num_channels = input_shape[-1]
         self.N = input_shape[1]
         A = make_dwt_operator_matrix_A(self.h0,self.h1,self.N)
         # A = DWTop(self.h0,self.h1,self.N).A
@@ -80,56 +73,33 @@ class DWT3D(tf.keras.layers.Layer):
 
         return tf.concat([LLL, LLH, LHL, LHH, HLL, HLH, HHL, HHH], axis=-1)
 
-    def get_config(self):
-        config = super().get_config()
-        config.update({
-            'wave': self.wave,
-            'clean': self.clean,
-            # 'h0': list(self.h0),  # Converts TrackedList to regular list
-            # add h1 if you also need it
-            # 'h1': list(self.h1),
-        })
-        return config
-
         
 #%%
 @keras.saving.register_keras_serializable()
-class IDWT3D(tf.keras.layers.Layer):
-    """TFDWT: Fast Discrete Wavelet Transform TensorFlow Layers.
-    Copyright (C) 2025 Kishore Kumar Tarafdar
+class IDWT3D(IDWTNDlayout):
+    """ TFDWT: Fast Discrete Wavelet Transform TensorFlow Layers.
+        Copyright (C) 2025 Kishore Kumar Tarafdar
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+        This program is free software: you can redistribute it and/or modify
+        it under the terms of the GNU General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-    
-       
+        You should have received a copy of the GNU General Public License
+        along with this program.  If not, see <https://www.gnu.org/licenses/>.
+        
+        
     Note: if clean==True  then I/O (batch, N/2, N/2, N/2, channels*8) -> (batch, N, N, N, channels)
           if clean==False then I/O (batch, N, N, N, channels) -> (batch, N, N, N, channels)
 
-    
     IDWT3D layer --kkt@20Jun2024"""
     def __init__(self, wave='haar', clean=True, **kwargs):
-        super().__init__(**kwargs)
-        self.wave = wave
-        self.clean = clean
-        w = FetchAnalysisSynthesisFilters(wave)
-        if 'bior' in wave or 'rbio' in wave:
-            """BIORTHOGONAL wavelets"""
-            self.h0, self.h1 = w.synthesis()
-            print(f"Biothogonal wavelet {wave}")
-        else:
-            """ORTHOGONAL wavelets"""
-            self.h0, self.h1 = w.analysis()
-        self.L = len(self.h0)
+        super().__init__(wave=wave, clean=clean, **kwargs)
 
     def build(self, input_shape):
         if self.clean: self.N = int(input_shape[1]*2)
@@ -181,18 +151,6 @@ class IDWT3D(tf.keras.layers.Layer):
 
         return arr  # shape: (batch, N, N, N, channels)
     
-    def get_config(self):
-        config = super().get_config()
-        config.update({
-            'wave': self.wave,
-            'clean': self.clean,
-            # 'h0': list(self.h0),  # Converts TrackedList to regular list
-            # add h1 if you also need it
-            # 'h1': list(self.h1),
-        })
-        return config
-
-
 
 if __name__=='__main__':  
     import os
@@ -222,4 +180,27 @@ if __name__=='__main__':
     ## IDWT
     xhat = idwt_layer(lh)
     print("DWT output shape:", lh.shape)
-    print("Max reconstruction error", tf.reduce_max(tf.math.abs(x-xhat)).numpy())
+    print("Max reconstruction error\n\n", tf.reduce_max(tf.math.abs(x-xhat)).numpy())
+
+
+    ## Example 
+    # Functional model
+    N, channels, filters = 4, 1, 1
+    input_shape = (N, N, N, channels)  # Replace N with the actual size of x            #1D
+    inputs = tf.keras.Input(shape=input_shape)
+    H1 = DWT3D(wave='db2')
+    H2 = IDWT3D(wave='db2')
+    lh = H1(inputs)
+    outputs = H2(lh)
+    # Build the model
+    model = tf.keras.Model(inputs=inputs, outputs=outputs)
+    model.compile(optimizer='adam', loss='mse', jit_compile=False)
+    model.summary()
+    # Random data
+    ## 3D
+    inputs_data = tf.random.normal((1, N, N, N, channels))
+    targets = tf.random.normal((1, N, N, N, channels))
+    # Training loop for 5 epochs
+    epochs=5
+    # for epoch in range(5):
+    history = model.fit(inputs_data, targets, epochs=5, verbose=1)
