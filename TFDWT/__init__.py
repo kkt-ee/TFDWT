@@ -36,4 +36,4 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>."""
 
 
 
-__version__="0.0.6"
+__version__="0.0.7"

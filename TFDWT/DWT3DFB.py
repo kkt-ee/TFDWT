@@ -1,6 +1,6 @@
 import tensorflow as tf
 import keras
-from DWTFBlayout import DWTNDlayout, IDWTNDlayout
+from TFDWT.DWTFBlayout import DWTNDlayout, IDWTNDlayout
 # from TFDWT.DWTFilters import FetchAnalysisSynthesisFilters
 from TFDWT.dwt_op import make_dwt_operator_matrix_A
 # from TFDWT.DWTop import DWTop
