@@ -2,9 +2,9 @@
 
 [![PyPI Version](https://img.shields.io/pypi/v/TFDWT?label=PyPI&color=gold)](https://pypi.org/project/TFDWT/) 
 [![PyPI Version](https://img.shields.io/pypi/pyversions/TFDWT)](https://pypi.org/project/TFDWT/)
-[![TensorFlow Version](https://img.shields.io/badge/tensorflow-2.15--2.19-darkorange)](https://www.tensorflow.org/)
-[![Keras Version](https://img.shields.io/badge/keras-2--3-darkred)](https://keras.io/)
-[![CUDA Version](https://img.shields.io/badge/cuda-12.5.1-green)](https://developer.nvidia.com/cuda-toolkit)
+[![TensorFlow Version](https://img.shields.io/badge/tensorflow-2.15%2B-darkorange)](https://www.tensorflow.org/)
+[![Keras Version](https://img.shields.io/badge/keras-2%20and%203-darkred)](https://keras.io/)
+[![CUDA Version](https://img.shields.io/badge/cuda-12%2B-green)](https://developer.nvidia.com/cuda-toolkit)
 [![NumPy Version](https://img.shields.io/badge/numpy-2.0.2-blueviolet)](https://numpy.org/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-deepgreen.svg?style=flat)](LICENSE)
 
@@ -199,10 +199,10 @@ Each `Hi` contains all high‑pass subbands at level `i` (1 for 1D, 3 for 2D, 7 
 
 ```txt
         Python 3.12.7
-        TensorFlow 2.15 to 2.19
+        TensorFlow 2.15+ (verified on 2.21.0)
         Keras 2 and 3
         Numpy 2.0.2
-        CUDA 12.5.1
+        CUDA 12+
 ```
 
 
