@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "TFDWT"
 version = "0.0.7"
 authors = [
-  { name="Kishore Kumar Tarafdar", email="kishorektarafdar@gmail.com" },
+  { name="Kishore Kumar Tarafdar", email="kkt.ee.ai@gmail.com" },
 ]
 description = "Fast Discrete Wavelet Transform TensorFlow Layers"
 readme = "README.md"
