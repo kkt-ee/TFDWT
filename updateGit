@@ -6,5 +6,5 @@
 
 ## Update repo
 git add -A
-git commit -m "update"
+git commit -m "removing older versions"
 git push -u origin main
