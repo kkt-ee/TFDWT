@@ -7,20 +7,19 @@ from TFDWT.dwt_op import make_dwt_operator_matrix_A
 @keras.saving.register_keras_serializable()
 class DWTNDlayout(tf.keras.layers.Layer):
     """ TFDWT: Fast Discrete Wavelet Transform TensorFlow Layers.
-        Copyright (C) 2025 Kishore Kumar Tarafdar
+        Copyright 2026 Kishore Kumar Tarafdar
 
-        This program is free software: you can redistribute it and/or modify
-        it under the terms of the GNU General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version.
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
 
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU General Public License for more details.
+            https://www.apache.org/licenses/LICENSE-2.0
 
-        You should have received a copy of the GNU General Public License
-        along with this program.  If not, see <https://www.gnu.org/licenses/>.
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
 
     Note: if clean==True  then I/O (batch, N,..., N, channels) -> (batch, N/2,..., N/2, channels*2)
           if clean==False then I/O (batch, N,..., N, channels) -> (batch, N..., N, channels)
@@ -41,7 +40,8 @@ class DWTNDlayout(tf.keras.layers.Layer):
         self.N = input_shape[1]
         A = make_dwt_operator_matrix_A(self.h0,self.h1,self.N)
         # A = DWTop(self.h0,self.h1,self.N).A
-        self.A = tf.cast(tf.transpose(A, perm=[1,0]), tf.float32)
+        # Use analysis operator A with standard orientation (N x N)
+        self.A = tf.cast(A, tf.float32)
         super().build(input_shape)
     
     def call(self, x):
@@ -75,20 +75,19 @@ class DWTNDlayout(tf.keras.layers.Layer):
 @keras.saving.register_keras_serializable()
 class IDWTNDlayout(tf.keras.layers.Layer):
     """ TFDWT: Fast Discrete Wavelet Transform TensorFlow Layers.
-        Copyright (C) 2025 Kishore Kumar Tarafdar
+        Copyright 2026 Kishore Kumar Tarafdar
 
-        This program is free software: you can redistribute it and/or modify
-        it under the terms of the GNU General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version.
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
 
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU General Public License for more details.
+            https://www.apache.org/licenses/LICENSE-2.0
 
-        You should have received a copy of the GNU General Public License
-        along with this program.  If not, see <https://www.gnu.org/licenses/>.  
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.  
         
     Note: if clean==True  then I/O (batch, N/2,..., N/2, channels*2) -> (batch, N,..., N, channels)
           if clean==False then I/O (batch, N,..., N, channels) -> (batch, N,..., N, channels)  
@@ -113,7 +112,8 @@ class IDWTNDlayout(tf.keras.layers.Layer):
         else: self.N = int(input_shape[1])
         A = make_dwt_operator_matrix_A(self.h0,self.h1,self.N)
         # A = DWTop(self.h0,self.h1,self.N).A
-        self.S = tf.cast(A, tf.float32)  # No transpose needed
+        # Use synthesis operator as A^T for consistency
+        self.S = tf.cast(tf.transpose(A), tf.float32)
         super().build(input_shape)
 
     def call(self, inputs):

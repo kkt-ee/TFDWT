@@ -2,26 +2,24 @@ import tensorflow as tf
 import keras
 from TFDWT.DWTFBlayout import DWTNDlayout, IDWTNDlayout
 # from TFDWT.DWTFilters import FetchAnalysisSynthesisFilters
-from TFDWT.dwt_op import make_dwt_operator_matrix_A
 # from TFDWT.DWTop import DWTop
 
 @keras.saving.register_keras_serializable()
 class DWT2D(DWTNDlayout):
     """ TFDWT: Fast Discrete Wavelet Transform TensorFlow Layers.
-        Copyright (C) 2025 Kishore Kumar Tarafdar
+        Copyright 2026 Kishore Kumar Tarafdar
 
-        This program is free software: you can redistribute it and/or modify
-        it under the terms of the GNU General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version.
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
 
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU General Public License for more details.
+            https://www.apache.org/licenses/LICENSE-2.0
 
-        You should have received a copy of the GNU General Public License
-        along with this program.  If not, see <https://www.gnu.org/licenses/>.
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
         
     Note: if clean==True  then I/O (batch, N, N, channels) -> (batch, N/2, N/2 channels*4)
           if clean==False then I/O (batch, N, N, channels) -> (batch, N, N, channels)
@@ -31,10 +29,7 @@ class DWT2D(DWTNDlayout):
         super().__init__(wave=wave, clean=clean, **kwargs)
 
     def build(self, input_shape):
-        # self.num_channels = input_shape[-1]
-        self.N = input_shape[1]
-        A = make_dwt_operator_matrix_A(self.h0,self.h1,self.N)
-        self.A = tf.cast(A, tf.float32)  # (N, N)
+        # Defer to base layout which sets self.A = A
         super().build(input_shape)
        
     def call(self, inputs):        
@@ -71,20 +66,19 @@ class DWT2D(DWTNDlayout):
 @keras.saving.register_keras_serializable()
 class IDWT2D(IDWTNDlayout):
     """ TFDWT: Fast Discrete Wavelet Transform TensorFlow Layers.
-        Copyright (C) 2025 Kishore Kumar Tarafdar
+        Copyright 2026 Kishore Kumar Tarafdar
 
-        This program is free software: you can redistribute it and/or modify
-        it under the terms of the GNU General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version.
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
 
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU General Public License for more details.
+            https://www.apache.org/licenses/LICENSE-2.0
 
-        You should have received a copy of the GNU General Public License
-        along with this program.  If not, see <https://www.gnu.org/licenses/>.
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
     
     Note: if clean==True  then I/O (batch, N/2, N/2, channels*4) -> (batch, N, N channels)
           if clean==False then I/O (batch, N, N, channels) -> (batch, N, N, channels)
@@ -94,13 +88,7 @@ class IDWT2D(IDWTNDlayout):
         super().__init__(wave=wave, clean=clean, **kwargs)
     
     def build(self, input_shape):
-        # self.num_channels = input_shape[-1]
-        # self.N = int(input_shape[1])
-        if self.clean: self.N = int(input_shape[1]*2)
-        else: self.N = int(input_shape[1])
-        A = make_dwt_operator_matrix_A(self.h0,self.h1,self.N)
-        # A = DWTop(self.h0,self.h1,self.N).A
-        self.S = tf.cast(tf.transpose(A), tf.float32)  # (N, N)
+        # Defer to base layout which sets self.S = A^T
         super().build(input_shape)
 
     def call(self, inputs):

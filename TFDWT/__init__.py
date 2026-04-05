@@ -1,20 +1,19 @@
 """ॐ
 
 TFDWT: Fast Discrete Wavelet Transform TensorFlow Layers.
-Copyright (C) 2025 Kishore Kumar Tarafdar
+Copyright 2026 Kishore Kumar Tarafdar
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+    https://www.apache.org/licenses/LICENSE-2.0
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>."""
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License."""
 
 
 
@@ -33,5 +32,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>."""
 # from TFDWT.DWT3DFB import DWT3D, IDWT3D
 
 
+## multilevel DWT FB
+# from TFDWT.multilevel.dwt1 import dwt1
+# from TFDWT.multilevel.dwt2 import dwt2
+# from TFDWT.multilevel.dwt3 import dwt3
 
-__version__="0.0.7"
+
+
+
+__version__="0.1.0"
