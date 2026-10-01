@@ -108,6 +108,34 @@ def test_single_level_pr_3d_clean_modes():
         _assert_pr(x, xhat, tol=1e-5)
 
 
+def test_dwt3d_mirrored_strategy_matches_eager_subbands():
+    x = tf.convert_to_tensor(_make_volume_3d(16), dtype=tf.float32)
+    expected = DWT3D(wave="haar", clean=True)(x)
+
+    class DWTLayer(tf.keras.layers.Layer):
+        def __init__(self):
+            super().__init__()
+            self.dwt = DWT3D(wave="haar", clean=True)
+
+        def call(self, inputs):
+            return self.dwt(inputs)
+
+    class DWTModel(tf.keras.Model):
+        def __init__(self):
+            super().__init__()
+            self.dwt_layer = DWTLayer()
+
+        def call(self, inputs):
+            return self.dwt_layer(inputs)
+
+    strategy = tf.distribute.MirroredStrategy()
+    with strategy.scope():
+        model = DWTModel()
+
+    actual = model(x, training=False)
+    np.testing.assert_array_equal(actual.numpy(), expected.numpy())
+
+
 def test_multilevel_pr_1d():
     level = 3
     x = tf.convert_to_tensor(_make_signal_1d(64), dtype=tf.float32)
