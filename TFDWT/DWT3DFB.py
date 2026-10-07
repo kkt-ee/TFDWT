@@ -1,6 +1,7 @@
 import tensorflow as tf
 import keras
 from TFDWT.DWTFBlayout import DWTNDlayout, IDWTNDlayout
+from TFDWT.dwt_op import analysis_filterbank_axis, synthesis_filterbank_axis
 # from TFDWT.DWTFilters import FetchAnalysisSynthesisFilters
 # from TFDWT.DWTop import DWTop
 
@@ -25,8 +26,8 @@ class DWT3D(DWTNDlayout):
           if clean==False then I/O (batch, N, N, N, channels) -> (batch, N, N, N, channels)
     
     DWT3D layer  --kkt@4Jul2024"""
-    def __init__(self, wave='haar', clean=True, **kwargs):
-        super().__init__(wave=wave, clean=clean, **kwargs)
+    def __init__(self, wave='haar', clean=True, backend='matrix', **kwargs):
+        super().__init__(wave=wave, clean=clean, backend=backend, **kwargs)
 
     def build(self, input_shape):
         # Defer to base layout which sets self.A = A
@@ -35,6 +36,13 @@ class DWT3D(DWTNDlayout):
 
     def call(self, inputs):
         # Inputs: (batch, row, col, depth, channel)
+        if self.backend == 'filterbank':
+            x = analysis_filterbank_axis(inputs, self.h0, self.h1, axis=2)
+            x = analysis_filterbank_axis(x, self.h0, self.h1, axis=1)
+            x = analysis_filterbank_axis(x, self.h0, self.h1, axis=3)
+            if self.clean: return self.__extract_8subbands(x)
+            else: return x
+
         A = self.A
 
         # Step 1: columns (axis 2)
@@ -92,8 +100,8 @@ class IDWT3D(IDWTNDlayout):
           if clean==False then I/O (batch, N, N, N, channels) -> (batch, N, N, N, channels)
 
     IDWT3D layer --kkt@20Jun2024"""
-    def __init__(self, wave='haar', clean=True, **kwargs):
-        super().__init__(wave=wave, clean=clean, **kwargs)
+    def __init__(self, wave='haar', clean=True, backend='matrix', **kwargs):
+        super().__init__(wave=wave, clean=clean, backend=backend, **kwargs)
 
     def build(self, input_shape):
         # Defer to base layout which sets self.S = A^T
@@ -102,6 +110,11 @@ class IDWT3D(IDWTNDlayout):
     def call(self, inputs):
         # Inputs: (batch, row, col, depth, channel)
         if self.clean: inputs = self.__join_octants(inputs)
+        if self.backend == 'filterbank':
+            x = synthesis_filterbank_axis(inputs, self.h0, self.h1, axis=2)
+            x = synthesis_filterbank_axis(x, self.h0, self.h1, axis=1)
+            return synthesis_filterbank_axis(x, self.h0, self.h1, axis=3)
+
         # S = self.S
         # Step 1: columns (axis 2)
         x = tf.transpose(inputs, [0, 2, 1, 3, 4])      # (batch, col, row, depth, ch)

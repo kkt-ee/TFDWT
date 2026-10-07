@@ -1,6 +1,7 @@
 import tensorflow as tf
 import keras
 from TFDWT.DWTFBlayout import DWTNDlayout, IDWTNDlayout
+from TFDWT.dwt_op import analysis_filterbank_axis, synthesis_filterbank_axis
 # from TFDWT.DWTFilters import FetchAnalysisSynthesisFilters
 # from TFDWT.DWTop import DWTop
 
@@ -25,13 +26,21 @@ class DWT1D(DWTNDlayout):
           if clean==False then I/O (batch, N, channels) -> (batch, N, channels)
 
     DWT1D layer  --kkt@04Jul2024"""
-    def __init__(self, wave='haar', clean=True, **kwargs):
-        super().__init__(wave=wave, clean=clean, **kwargs)
+    def __init__(self, wave='haar', clean=True, backend='matrix', **kwargs):
+        super().__init__(wave=wave, clean=clean, backend=backend, **kwargs)
 
     def call(self, inputs):
         # inputs: (batch, N, channels)
         # Apply analysis operator along the length dimension: out = A @ x
-        out = tf.einsum('ij,bjc->bic', self.A, inputs)
+        if self.backend == 'matrix':
+            out = tf.einsum('ij,bjc->bic', self.A, inputs)
+        else:
+            out = analysis_filterbank_axis(
+                inputs,
+                self.h0,
+                self.h1,
+                axis=1,
+            )
         if self.clean: return self.__extract_2subbands(out)
         else: return out
 
@@ -66,14 +75,22 @@ class IDWT1D(IDWTNDlayout):
           if clean==False then I/O (batch, N, channels) -> (batch, N, channels)  
     
     IDWT1D layer --kkt@04Jul2024"""
-    def __init__(self, wave='haar', clean=True, **kwargs):
-        super().__init__(wave=wave, clean=clean, **kwargs)
+    def __init__(self, wave='haar', clean=True, backend='matrix', **kwargs):
+        super().__init__(wave=wave, clean=clean, backend=backend, **kwargs)
     
     def call(self, inputs):
         # inputs: (batch, N, channels)
         if self.clean: inputs = self.__join_2subbands(inputs)
         # Apply synthesis operator along the length dimension: out = S @ x
-        out = tf.einsum('ij,bjc->bic', self.S, inputs)
+        if self.backend == 'matrix':
+            out = tf.einsum('ij,bjc->bic', self.S, inputs)
+        else:
+            out = synthesis_filterbank_axis(
+                inputs,
+                self.h0,
+                self.h1,
+                axis=1,
+            )
         return out
 
     def __join_2subbands(self, concat_subbands):

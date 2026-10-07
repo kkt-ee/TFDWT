@@ -4,6 +4,16 @@ from TFDWT.DWTFilters import FetchAnalysisSynthesisFilters
 from TFDWT.dwt_op import make_dwt_operator_matrix_A
 # from TFDWT.DWTop import DWTop
 
+
+_VALID_BACKENDS = ('matrix', 'filterbank')
+
+
+def _validate_backend(backend):
+    if backend not in _VALID_BACKENDS:
+        choices = ', '.join(repr(value) for value in _VALID_BACKENDS)
+        raise ValueError(f"backend must be one of: {choices}.")
+    return backend
+
 @keras.saving.register_keras_serializable()
 class DWTNDlayout(tf.keras.layers.Layer):
     """ TFDWT: Fast Discrete Wavelet Transform TensorFlow Layers.
@@ -25,10 +35,11 @@ class DWTNDlayout(tf.keras.layers.Layer):
           if clean==False then I/O (batch, N,..., N, channels) -> (batch, N..., N, channels)
 
     DWT ND layout (mother class)  --kkt@20Jun2024"""
-    def __init__(self, wave='haar', clean=True, **kwargs):
+    def __init__(self, wave='haar', clean=True, backend='matrix', **kwargs):
         super().__init__(**kwargs)
         self.wave = wave
-        self.clean = clean  
+        self.clean = clean
+        self.backend = _validate_backend(backend)
         w = FetchAnalysisSynthesisFilters(wave)
         self.h0, self.h1 = w.analysis()
         self.L = len(self.h0)
@@ -38,16 +49,19 @@ class DWTNDlayout(tf.keras.layers.Layer):
     
     def build(self, input_shape):
         self.N = int(input_shape[1])
-        h0, h1, N = tuple(self.h0), tuple(self.h1), self.N
-        self.A = self.add_weight(
-            name='analysis_operator',
-            shape=(N, N),
-            dtype=tf.float32,
-            initializer=lambda shape, dtype: tf.cast(
-                make_dwt_operator_matrix_A(h0, h1, N), dtype
-            ),
-            trainable=False,
-        )
+        if self.backend == 'matrix':
+            h0, h1, N = tuple(self.h0), tuple(self.h1), self.N
+            self.A = self.add_weight(
+                name='analysis_operator',
+                shape=(N, N),
+                dtype=tf.float32,
+                initializer=lambda shape, dtype: tf.cast(
+                    make_dwt_operator_matrix_A(h0, h1, N), dtype
+                ),
+                trainable=False,
+            )
+        else:
+            self.A = None
         super().build(input_shape)
     
     def call(self, x):
@@ -71,6 +85,7 @@ class DWTNDlayout(tf.keras.layers.Layer):
         config.update({
             'wave': self.wave,
             'clean': self.clean,
+            'backend': self.backend,
             # 'h0': list(self.h0),  # Converts TrackedList to regular list
             # add h1 if you also need it
             # 'h1': list(self.h1),
@@ -99,10 +114,11 @@ class IDWTNDlayout(tf.keras.layers.Layer):
           if clean==False then I/O (batch, N,..., N, channels) -> (batch, N,..., N, channels)  
     
     IDWT ND layout (mother class) --kkt@20Jun2024"""
-    def __init__(self, wave='haar', clean=True, **kwargs):
+    def __init__(self, wave='haar', clean=True, backend='matrix', **kwargs):
         super().__init__(**kwargs)
         self.wave = wave
         self.clean = clean
+        self.backend = _validate_backend(backend)
         w = FetchAnalysisSynthesisFilters(wave)
         if 'bior' in wave or 'rbio' in wave:
             """BIORTHOGONAL wavelets"""
@@ -116,16 +132,19 @@ class IDWTNDlayout(tf.keras.layers.Layer):
     def build(self, input_shape):
         if self.clean: self.N = int(input_shape[1] * 2)
         else: self.N = int(input_shape[1])
-        h0, h1, N = tuple(self.h0), tuple(self.h1), self.N
-        self.S = self.add_weight(
-            name='synthesis_operator',
-            shape=(N, N),
-            dtype=tf.float32,
-            initializer=lambda shape, dtype: tf.cast(
-                tf.transpose(make_dwt_operator_matrix_A(h0, h1, N)), dtype
-            ),
-            trainable=False,
-        )
+        if self.backend == 'matrix':
+            h0, h1, N = tuple(self.h0), tuple(self.h1), self.N
+            self.S = self.add_weight(
+                name='synthesis_operator',
+                shape=(N, N),
+                dtype=tf.float32,
+                initializer=lambda shape, dtype: tf.cast(
+                    tf.transpose(make_dwt_operator_matrix_A(h0, h1, N)), dtype
+                ),
+                trainable=False,
+            )
+        else:
+            self.S = None
         super().build(input_shape)
 
     def call(self, inputs):
@@ -151,6 +170,7 @@ class IDWTNDlayout(tf.keras.layers.Layer):
         config.update({
             'wave': self.wave,
             'clean': self.clean,
+            'backend': self.backend,
             # 'h0': list(self.h0),  # Converts TrackedList to regular list
             # add h1 if you also need it
             # 'h1': list(self.h1),

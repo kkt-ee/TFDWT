@@ -120,6 +120,19 @@ x_hat = IDWT1D(wave='bior3.1')(LH)  # Synthesis
 
 ```
 
+The level-1 layers use `backend='matrix'` by default, preserving the existing
+dense operator implementation. Set `backend='filterbank'` on both the DWT and
+IDWT layers to compute the same periodic transform with strided convolutions,
+without storing an $N\times N$ operator matrix:
+
+```python
+LH = DWT1D(wave='bior3.1', backend='filterbank')(x)
+x_hat = IDWT1D(wave='bior3.1', backend='filterbank')(LH)
+```
+
+The same `backend` argument is available on `DWT2D`/`IDWT2D` and
+`DWT3D`/`IDWT3D`.
+
 <br/><br/>
 
 ### Compute $\text{DWT}$ $2\text{D}$ and $\text{IDWT}$ $2\text{D}$ of batched, multichannel $x$ of shape $(\text{batch, height, width, channels})$

@@ -1,6 +1,7 @@
 import tensorflow as tf
 import keras
 from TFDWT.DWTFBlayout import DWTNDlayout, IDWTNDlayout
+from TFDWT.dwt_op import analysis_filterbank_axis, synthesis_filterbank_axis
 # from TFDWT.DWTFilters import FetchAnalysisSynthesisFilters
 # from TFDWT.DWTop import DWTop
 
@@ -25,14 +26,23 @@ class DWT2D(DWTNDlayout):
           if clean==False then I/O (batch, N, N, channels) -> (batch, N, N, channels)
 
     DWT2D layer  --kkt@20Jun2024"""
-    def __init__(self, wave='haar', clean=True, **kwargs):
-        super().__init__(wave=wave, clean=clean, **kwargs)
+    def __init__(self, wave='haar', clean=True, backend='matrix', **kwargs):
+        super().__init__(wave=wave, clean=clean, backend=backend, **kwargs)
 
     def build(self, input_shape):
         # Defer to base layout which sets self.A = A
         super().build(input_shape)
        
     def call(self, inputs):        
+        if self.backend == 'filterbank':
+            x = analysis_filterbank_axis(
+                inputs, self.h0, self.h1, axis=2
+            )
+            x = analysis_filterbank_axis(x, self.h0, self.h1, axis=1)
+            if self.clean:
+                return self.__extract_4subbands(x)
+            return x
+
         # Step 1: Transpose for each channel (swap axes 1 and 2)
         x = tf.transpose(inputs, [0, 2, 1, 3])  # (batch, N, N, channels)
 
@@ -84,8 +94,8 @@ class IDWT2D(IDWTNDlayout):
           if clean==False then I/O (batch, N, N, channels) -> (batch, N, N, channels)
 
     IDWT2D layer --kkt@4Jul2024"""
-    def __init__(self, wave='haar', clean=True, **kwargs):
-        super().__init__(wave=wave, clean=clean, **kwargs)
+    def __init__(self, wave='haar', clean=True, backend='matrix', **kwargs):
+        super().__init__(wave=wave, clean=clean, backend=backend, **kwargs)
     
     def build(self, input_shape):
         # Defer to base layout which sets self.S = A^T
@@ -94,6 +104,14 @@ class IDWT2D(IDWTNDlayout):
     def call(self, inputs):
         # inputs: (batch, N, N, channels)
         if self.clean: inputs = self.__join_quadrants(inputs)
+        if self.backend == 'filterbank':
+            x = synthesis_filterbank_axis(
+                inputs, self.h0, self.h1, axis=2
+            )
+            return synthesis_filterbank_axis(
+                x, self.h0, self.h1, axis=1
+            )
+
         # Step 1: transpose N and N axes (1 and 2)
         x = tf.transpose(inputs, [0, 2, 1, 3])  # (batch, N, N, channels)
         # Step 2: matmul along axis 2 (columns after transpose)
