@@ -174,8 +174,28 @@ The package also provides simple helpers for building multilevel pyramids using 
 from TFDWT.multilevel.dwt import dwt, idwt
 
 level = 3
-subbands = dwt(x, level=level, Ψ='haar')   # returns [H1, H2, ..., HL, LL]
-x_hat    = idwt(subbands, level=level, Ψ='haar')
+subbands = dwt(                            # [H1, H2, ..., HL, LL]
+    x, level=level, Ψ='haar', backend='filterbank'
+)
+x_hat = idwt(
+    subbands, level=level, Ψ='haar', backend='filterbank'
+)
+```
+
+For a length-preserving coefficient tensor, including transforms along an
+arbitrary tensor axis, use the packed 1D helpers. Their coefficient order is
+`[L_level, H_level, H_(level-1), ..., H1]`:
+
+```python
+from TFDWT.multilevel.dwt import dwt_packed_axis, idwt_packed_axis
+
+coefficients = dwt_packed_axis(
+    x, level=3, wave='bior2.2', axis=1, backend='filterbank'
+)
+x_hat = idwt_packed_axis(
+    coefficients, level=3, wave='bior2.2', axis=1,
+    backend='filterbank',
+)
 ```
 
 2D

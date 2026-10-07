@@ -70,6 +70,32 @@ def _validate_filterbank_inputs(x, h0, h1):
     return h0, h1, int(filter_length)
 
 
+def operator_matrix_axis(x, operator, axis):
+    """Apply a square linear operator along one arbitrary tensor axis."""
+    x = tf.convert_to_tensor(x)
+    operator = tf.cast(tf.convert_to_tensor(operator), x.dtype)
+    moved, inverse_permutation = _move_axis_to_last(x, axis)
+    moved_shape = tf.shape(moved)
+    length = moved_shape[-1]
+    checks = (
+        tf.debugging.assert_equal(
+            tf.shape(operator)[0],
+            length,
+            message="The operator output length must match the selected axis.",
+        ),
+        tf.debugging.assert_equal(
+            tf.shape(operator)[1],
+            length,
+            message="The operator input length must match the selected axis.",
+        ),
+    )
+    with tf.control_dependencies(checks):
+        fibres = tf.reshape(moved, [-1, length])
+    transformed = tf.einsum('ij,bj->bi', operator, fibres)
+    restored = tf.reshape(transformed, moved_shape)
+    return tf.transpose(restored, inverse_permutation)
+
+
 def analysis_filterbank_axis(x, h0, h1, axis):
     """Apply the packed periodic analysis bank along one tensor axis.
 
