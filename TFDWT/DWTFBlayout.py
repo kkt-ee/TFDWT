@@ -37,11 +37,17 @@ class DWTNDlayout(tf.keras.layers.Layer):
         # self.L = self.h0.shape[0]
     
     def build(self, input_shape):
-        self.N = input_shape[1]
-        A = make_dwt_operator_matrix_A(self.h0,self.h1,self.N)
-        # A = DWTop(self.h0,self.h1,self.N).A
-        # Use analysis operator A with standard orientation (N x N)
-        self.A = tf.cast(A, tf.float32)
+        self.N = int(input_shape[1])
+        h0, h1, N = tuple(self.h0), tuple(self.h1), self.N
+        self.A = self.add_weight(
+            name='analysis_operator',
+            shape=(N, N),
+            dtype=tf.float32,
+            initializer=lambda shape, dtype: tf.cast(
+                make_dwt_operator_matrix_A(h0, h1, N), dtype
+            ),
+            trainable=False,
+        )
         super().build(input_shape)
     
     def call(self, x):
@@ -110,10 +116,16 @@ class IDWTNDlayout(tf.keras.layers.Layer):
     def build(self, input_shape):
         if self.clean: self.N = int(input_shape[1] * 2)
         else: self.N = int(input_shape[1])
-        A = make_dwt_operator_matrix_A(self.h0,self.h1,self.N)
-        # A = DWTop(self.h0,self.h1,self.N).A
-        # Use synthesis operator as A^T for consistency
-        self.S = tf.cast(tf.transpose(A), tf.float32)
+        h0, h1, N = tuple(self.h0), tuple(self.h1), self.N
+        self.S = self.add_weight(
+            name='synthesis_operator',
+            shape=(N, N),
+            dtype=tf.float32,
+            initializer=lambda shape, dtype: tf.cast(
+                tf.transpose(make_dwt_operator_matrix_A(h0, h1, N)), dtype
+            ),
+            trainable=False,
+        )
         super().build(input_shape)
 
     def call(self, inputs):
