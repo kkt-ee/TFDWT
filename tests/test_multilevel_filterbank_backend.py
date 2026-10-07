@@ -272,3 +272,9 @@ def test_multilevel_validation():
         dwt_packed_axis(x, level=3, wave="db10")
     with pytest.raises(ValueError, match="backend"):
         dwt(x, backend="unknown")
+    subbands = dwt(x, level=2)
+    with pytest.raises(
+        ValueError,
+        match="level=1 requires 2 subbands, but received 3",
+    ):
+        idwt(subbands, level=1)

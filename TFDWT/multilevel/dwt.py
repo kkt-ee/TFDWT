@@ -200,8 +200,13 @@ def idwt(subbands, level=3, Ψ='haar', backend='matrix'):
         See the License for the specific language governing permissions and
         limitations under the License.
     """
-    _validate_level(level)
+    level = _validate_level(level)
     backend = _validate_backend(backend)
+    if len(subbands) != level + 1:
+        raise ValueError(
+            f"level={level} requires {level + 1} subbands, "
+            f"but received {len(subbands)}."
+        )
     *highpasses, lowpass = subbands  # unpack: [H1, H2, ..., Hn, ln]
     
     current = lowpass
